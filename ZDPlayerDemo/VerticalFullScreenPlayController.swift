@@ -1,5 +1,5 @@
 //
-//  NormalPlayController.swift
+//  VerticalFullScreenPlayController.swift
 //  ZDPlayerDemo
 //
 //  Created by season on 2019/2/14.
@@ -9,7 +9,7 @@
 import UIKit
 import ZDPlayer
 
-class NormalPlayController: UIViewController {
+class VerticalFullScreenPlayController: UIViewController {
     
     var player: ZDPlayer!
     var localURL: URL!
@@ -29,20 +29,17 @@ class NormalPlayController: UIViewController {
         print(path)
         
         view.addSubview(player.playerView)
-
-        player.loadVideo(url: remotURL)
+        
+        player.loadVideo(url: localURL)
         player.backgroundMode = .proceed
-        /*
-         可以将两个代理二合一
-         */
+ 
         player.delegate = self
-        //self.player.playerView.delegate = self
-        player.setVideoTitle("China NO.1")
+        player.setVideoTitle("The Song")
         player.playerView.snp.makeConstraints { (make) in
-            make.top.equalTo(view.snp.top).offset(UIApplication.shared.statusBarFrame.height + 44)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.left.equalTo(view.snp.left)
             make.right.equalTo(view.snp.right)
-            make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
     
@@ -70,11 +67,11 @@ class NormalPlayController: UIViewController {
     //    }
     
     deinit {
-        print("NormalPlayController销毁了")
+        print("VerticalFullScreenPlayController销毁了")
     }
 }
 
-extension NormalPlayController: ZDPlayerDelegate {
+extension VerticalFullScreenPlayController: ZDPlayerDelegate {
     
     func player(_ player: ZDPlayer, stateDidChange state: PlayState) {
         
@@ -107,19 +104,4 @@ extension NormalPlayController: ZDPlayerDelegate {
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
         isShowPlayControl ? print("ZDPlayerDelegate显示播放组件") : print("ZDPlayerDelegate隐藏播放组件")
     }
-}
-
-extension NormalPlayController: ZDPlayerViewDelegate {
-    func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
-        isFullscreen ? print("ZDPlayerViewDelegate进入全屏") : print("ZDPlayerViewDelegate退出全屏")
-    }
-    
-    func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {
-        print("ZDPlayerViewDelegate点击了关闭按钮")
-    }
-    
-    func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
-        isShowPlayControl ? print("ZDPlayerViewDelegate显示播放组件") : print("ZDPlayerViewDelegate隐藏播放组件")
-    }
-    
 }

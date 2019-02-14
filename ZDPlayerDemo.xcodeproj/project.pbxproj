@@ -40,6 +40,9 @@
 		611CB3132213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt in Resources */ = {isa = PBXBuildFile; fileRef = 611CB3112213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt */; };
 		611CB3152213F0C60009C1A0 /* ad_douyin.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 611CB3142213F0C60009C1A0 /* ad_douyin.mp4 */; };
 		611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB316221515410009C1A0 /* NormalPlayController.swift */; };
+		611CB319221553E20009C1A0 /* VerticalFullScreenPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */; };
+		611CB31C221557BF0009C1A0 /* LyricsPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB31B221557BF0009C1A0 /* LyricsPlayerView.swift */; };
+		611CB31E22155BC10009C1A0 /* LyricsPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB31D22155BC10009C1A0 /* LyricsPlayerController.swift */; };
 		984D5185E9ED91A87F470F36 /* Pods_ZDPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CB3D88CE67CB53ECEAFBD2 /* Pods_ZDPlayer.framework */; };
 		A797B880C64A95FF458A20EA /* Pods_ZDPlayerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156BBD63BCE25DE99D29D01C /* Pods_ZDPlayerDemo.framework */; };
 /* End PBXBuildFile section */
@@ -110,6 +113,9 @@
 		611CB3112213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt"; sourceTree = "<group>"; };
 		611CB3142213F0C60009C1A0 /* ad_douyin.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ad_douyin.mp4; sourceTree = "<group>"; };
 		611CB316221515410009C1A0 /* NormalPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalPlayController.swift; sourceTree = "<group>"; };
+		611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalFullScreenPlayController.swift; sourceTree = "<group>"; };
+		611CB31B221557BF0009C1A0 /* LyricsPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsPlayerView.swift; sourceTree = "<group>"; };
+		611CB31D22155BC10009C1A0 /* LyricsPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsPlayerController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,9 +174,12 @@
 		611CB2BC22110DCF0009C1A0 /* ZDPlayerDemo */ = {
 			isa = PBXGroup;
 			children = (
+				611CB31A221557590009C1A0 /* CustomPlayerView */,
 				611CB2BD22110DCF0009C1A0 /* AppDelegate.swift */,
 				611CB2BF22110DCF0009C1A0 /* ViewController.swift */,
 				611CB316221515410009C1A0 /* NormalPlayController.swift */,
+				611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */,
+				611CB31D22155BC10009C1A0 /* LyricsPlayerController.swift */,
 				611CB2C122110DCF0009C1A0 /* Main.storyboard */,
 				611CB2C422110DD00009C1A0 /* Assets.xcassets */,
 				611CB2C622110DD00009C1A0 /* LaunchScreen.storyboard */,
@@ -233,6 +242,14 @@
 				611CB3112213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt */,
 			);
 			path = DemoResources;
+			sourceTree = "<group>";
+		};
+		611CB31A221557590009C1A0 /* CustomPlayerView */ = {
+			isa = PBXGroup;
+			children = (
+				611CB31B221557BF0009C1A0 /* LyricsPlayerView.swift */,
+			);
+			path = CustomPlayerView;
 			sourceTree = "<group>";
 		};
 		7D2C5D609DFA8C50CEA18E9A /* Frameworks */ = {
@@ -434,9 +451,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				611CB319221553E20009C1A0 /* VerticalFullScreenPlayController.swift in Sources */,
+				611CB31C221557BF0009C1A0 /* LyricsPlayerView.swift in Sources */,
 				611CB2C022110DCF0009C1A0 /* ViewController.swift in Sources */,
 				611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */,
 				611CB2BE22110DCF0009C1A0 /* AppDelegate.swift in Sources */,
+				611CB31E22155BC10009C1A0 /* LyricsPlayerController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

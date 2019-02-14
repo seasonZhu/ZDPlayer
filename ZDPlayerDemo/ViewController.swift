@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    let dataSource = ["NormalPlayController", "Vertical Player", "Custom Player", "Custom Player 2", "Embed in cell of tableView"]
+    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayerController", "Custom Player 2", "Embed in cell of tableView"]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds, style: .plain)
@@ -52,9 +52,9 @@ extension ViewController: UITableViewDelegate {
         if indexPath.row == 0 {
             navigationController?.pushViewController(NormalPlayController(), animated: true)
         } else if indexPath.row == 1{
-            
+            navigationController?.pushViewController(VerticalFullScreenPlayController(), animated: true)
         } else if indexPath.row == 2 {
-            
+            navigationController?.pushViewController(LyricsPlayerController(), animated: true)
         } else if indexPath.row == 3 {
             
         } else {

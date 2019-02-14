@@ -29,7 +29,7 @@ extension ZDPlayerViewDelegate {
 }
 
 /// ZDPlayerView
-public class ZDPlayerView: UIView {
+open class ZDPlayerView: UIView {
     
     /// 播放器
     public weak var player: ZDPlayer?
@@ -205,6 +205,9 @@ public class ZDPlayerView: UIView {
     /// 父view
     private weak var parentView: UIView?
     
+    /// 定时器
+    private var timer: Timer?
+
     /// 播放器的frame
     private var viewFrame = CGRect.zero
     
@@ -232,12 +235,12 @@ public class ZDPlayerView: UIView {
         self.init(frame: .zero)
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     /// layoutSubviews
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         updatePlayerView(frame: bounds)
     }
@@ -245,17 +248,18 @@ public class ZDPlayerView: UIView {
     /// 析构函数
     deinit {
         print("ZDPlayerView销毁了")
+        timer?.invalidate()
+        timer = nil
         playerLayer?.removeFromSuperlayer()
         NotificationCenter.default.removeObserver(self)
     }
-}
-
-extension ZDPlayerView {
+    
+    //MARK:- 对外可重写方法,open修饰的方法不能写在extension中
     
     /// 播放状态已经改变
     ///
     /// - Parameter state: 播放状态
-    public func playStateDidChange(state: PlayState) {
+    open func playStateDidChange(state: PlayState) {
         playButton.isSelected = state == .playing
         replayButton.isHidden = !(state == .playFinished)
         
@@ -272,7 +276,7 @@ extension ZDPlayerView {
     /// 缓冲状态已经改变
     ///
     /// - Parameter state: 缓冲状态
-    public func bufferStateDidChange(state: BufferState) {
+    open func bufferStateDidChange(state: BufferState) {
         if state == .buffering {
             loadingIndicator.isHidden = false
             loadingIndicator.startAnimating()
@@ -297,7 +301,7 @@ extension ZDPlayerView {
     /// - Parameters:
     ///   - buffereDuration: 缓冲进度时间
     ///   - totalDuration: 总时间
-    public func bufferDidChange(buffereDuration: TimeInterval, totalDuration: TimeInterval) {
+    open func bufferDidChange(buffereDuration: TimeInterval, totalDuration: TimeInterval) {
         timeSlider.setProgress(Float(buffereDuration / totalDuration), animated: true)
     }
     
@@ -306,7 +310,7 @@ extension ZDPlayerView {
     /// - Parameters:
     ///   - currentDuration: 播放的当前时间
     ///   - totalDuration: 总时间
-    public func playerDurationDidChange(currentDuration: TimeInterval, totalDuration: TimeInterval) {
+    open func playerDurationDidChange(currentDuration: TimeInterval, totalDuration: TimeInterval) {
         var current = formatSecondsToString(seconds: currentDuration)
         if totalDuration.isNaN {
             current = "00:00"
@@ -321,12 +325,12 @@ extension ZDPlayerView {
     /// 设置ZDPlayer
     ///
     /// - Parameter player: ZDPlayer
-    public func setPlayer(_ player: ZDPlayer) {
+    open func setPlayer(_ player: ZDPlayer) {
         self.player = player
     }
     
     /// 重新加载View
-    public func reloadView() {
+    open func reloadView() {
         playerLayer = AVPlayerLayer(player: nil)
         timeSlider.value = 0
         timeSlider.setProgress(0, animated: false)
@@ -339,7 +343,7 @@ extension ZDPlayerView {
     }
     
     /// 重新加载Layer
-    public func reloadLayer() {
+    open func reloadLayer() {
         playerLayer = AVPlayerLayer(player: player?.player)
         guard let playerLayer = playerLayer else { return }
         layer.insertSublayer(playerLayer, at: 0)
@@ -349,7 +353,7 @@ extension ZDPlayerView {
     }
     
     /// 重新视频模式
-    public func reloadGravity() {
+    open func reloadGravity() {
         guard let player = player else { return }
         playerLayer?.videoGravity = player.videoGravity
     }
@@ -357,39 +361,47 @@ extension ZDPlayerView {
     /// 播放组件展示
     ///
     /// - Parameter isShow: 是否展示
-    public func playControlViewShow(_ isShow: Bool) {
+    open func playControlViewShow(_ isShow: Bool) {
         isShow ? showPlayerControlAnimation() : hiddenPlayerControlAnimation()
     }
     
     /// 更新PlayerView的frame
     ///
     /// - Parameter frame: frame
-    public func updatePlayerView(frame: CGRect) {
+    open func updatePlayerView(frame: CGRect) {
         playerLayer?.frame = frame
     }
     
     /// 进入全屏播放
-    public func enterFullScreen() {
+    open func enterFullScreen() {
         UIDevice.current.setValue(UIDeviceOrientation.landscapeLeft.rawValue, forKey: #keyPath(UIDevice.orientation))
     }
     
     /// 退出全屏播放
-    public func exitFullscreen() {
+    open func exitFullscreen() {
         UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: #keyPath(UIDevice.orientation))
     }
     
     /// 播放失败
     ///
     /// - Parameter error: 错误
-    public func playFailed(error: PlayerError) {
+    open func playFailed(error: PlayerError) {
         
+    }
+    
+    /// 组件布局
+    open func setUpUI() {
+        backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        setUpTopView()
+        setUpMiddelView()
+        setUpBottomView()
     }
     
     /// 时间格式化为字符串
     ///
     /// - Parameter seconds: 秒
     /// - Returns: xx:xx 的格式
-    public func formatSecondsToString(seconds: TimeInterval) -> String {
+    open func formatSecondsToString(seconds: TimeInterval) -> String {
         if seconds.isNaN {
             return "00:00"
         }
@@ -440,8 +452,9 @@ extension ZDPlayerView {
     
     /// 延迟播放组件消失
     func delayPlayControlViewDisappear() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + controlViewDuration) {
-            self.playControlViewShow(false)
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(timeInterval: controlViewDuration, repeats: false) { [weak self] in
+            self?.playControlViewShow(false)
         }
     }
     
@@ -563,15 +576,6 @@ extension ZDPlayerView {
 
 // MARK: - 界面搭建相关,功能按钮的布局还可以优化,这里仅仅实现了功能
 extension ZDPlayerView {
-    
-    /// 组件布局
-    func setUpUI() {
-        backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
-        setUpTopView()
-        setUpMiddelView()
-        setUpBottomView()
-    }
-    
     /// 上布局
     func setUpTopView() {
         addSubview(topView)
@@ -743,6 +747,7 @@ extension ZDPlayerView {
     @objc
     func timeSliderTouchDown(_ sender: PlayerSlider) {
         isTimeSliding = true
+        timer?.invalidate()
     }
 }
 
@@ -849,6 +854,7 @@ extension ZDPlayerView {
     func onPanGestureHorizontal(velocityX: CGFloat) -> TimeInterval {
         playControlViewShow(true)
         isTimeSliding = true
+        timer?.invalidate()
         let value = timeSlider.value
         if let _ = player?.currentDuration, let totalDuration = player?.totalDuration {
             let sliderValue = TimeInterval(value) * totalDuration + TimeInterval(velocityX) / 100.0 * (TimeInterval(totalDuration) / 400)
