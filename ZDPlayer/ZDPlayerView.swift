@@ -250,6 +250,7 @@ public class ZDPlayerView: UIView {
     
     /// 析构函数
     deinit {
+        print("ZDPlayerView销毁了")
         timer?.invalidate()
         timer = nil
         playerLayer?.removeFromSuperlayer()
@@ -484,7 +485,8 @@ extension ZDPlayerView {
         NotificationCenter.default.addObserver(forName: UIApplication.willChangeStatusBarOrientationNotification, object: nil, queue: OperationQueue.main) { (notification) in
             if let userInfo = notification.userInfo, let number = userInfo[UIApplication.statusBarOrientationUserInfoKey] as? Int {
                 let newOrientation = UIDeviceOrientation(rawValue: number)
-                if (self.lastOrientation == .portrait || self.lastOrientation == .unknown || self.lastOrientation == .portraitUpsideDown) && (newOrientation == .landscapeLeft || newOrientation == .landscapeRight) {
+                if (self.lastOrientation == .portrait || self.lastOrientation == .unknown || self.lastOrientation == .portraitUpsideDown)
+                    && (newOrientation == .landscapeLeft || newOrientation == .landscapeRight) {
                     self.parentView = self.superview
                     self.viewFrame = self.frame
                     print(self.viewFrame)
@@ -561,11 +563,12 @@ extension ZDPlayerView {
     }
 }
 
-// MARK: - 界面搭建相关
+// MARK: - 界面搭建相关,功能按钮的布局还可以优化,这里仅仅实现了功能
 extension ZDPlayerView {
     
     /// 组件布局
     func setUpUI() {
+        backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         setUpTopView()
         setUpMiddelView()
         setUpBottomView()
@@ -725,10 +728,10 @@ extension ZDPlayerView {
         
         if let duration = player?.totalDuration {
             let currentTime = Double(sender.value) * duration
-            player?.seekTime(currentTime) { (finished) in
+            player?.seekTime(currentTime) { [weak self] (finished) in
                 if finished {
-                    self.isTimeSliding = false
-                    self.setUpTimer()
+                    self?.isTimeSliding = false
+                    self?.setUpTimer()
                 }
             }
             timeLabel.text = formatSecondsToString(seconds: currentTime) + " / " +  formatSecondsToString(seconds: duration)
@@ -829,9 +832,9 @@ extension ZDPlayerView {
                 if sliderSeekTimeValue.isNaN {
                     return
                 }
-                player?.seekTime(sliderSeekTimeValue) { (finished) in
-                    self.isTimeSliding = false
-                    self.setUpTimer()
+                player?.seekTime(sliderSeekTimeValue) { [weak self] (finished) in
+                    self?.isTimeSliding = false
+                    self?.setUpTimer()
                 }
             case .vertical:
                 isVolume = false

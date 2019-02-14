@@ -244,6 +244,7 @@ public class ZDPlayer: NSObject {
     
     /// 析构函数
     deinit {
+        print("ZDPlayer销毁了")
         removePlayerNotification()
         clearPlayer()
         playerView.removeFromSuperview()

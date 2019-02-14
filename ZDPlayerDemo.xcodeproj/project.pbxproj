@@ -39,6 +39,7 @@
 		611CB3122213ED8C0009C1A0 /* 2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 611CB3102213ED8C0009C1A0 /* 2.mp4 */; };
 		611CB3132213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt in Resources */ = {isa = PBXBuildFile; fileRef = 611CB3112213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt */; };
 		611CB3152213F0C60009C1A0 /* ad_douyin.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 611CB3142213F0C60009C1A0 /* ad_douyin.mp4 */; };
+		611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB316221515410009C1A0 /* NormalPlayController.swift */; };
 		984D5185E9ED91A87F470F36 /* Pods_ZDPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CB3D88CE67CB53ECEAFBD2 /* Pods_ZDPlayer.framework */; };
 		A797B880C64A95FF458A20EA /* Pods_ZDPlayerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156BBD63BCE25DE99D29D01C /* Pods_ZDPlayerDemo.framework */; };
 /* End PBXBuildFile section */
@@ -108,6 +109,7 @@
 		611CB3102213ED8C0009C1A0 /* 2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2.mp4; sourceTree = "<group>"; };
 		611CB3112213ED8C0009C1A0 /* Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish].srt"; sourceTree = "<group>"; };
 		611CB3142213F0C60009C1A0 /* ad_douyin.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = ad_douyin.mp4; sourceTree = "<group>"; };
+		611CB316221515410009C1A0 /* NormalPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalPlayController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +170,7 @@
 			children = (
 				611CB2BD22110DCF0009C1A0 /* AppDelegate.swift */,
 				611CB2BF22110DCF0009C1A0 /* ViewController.swift */,
+				611CB316221515410009C1A0 /* NormalPlayController.swift */,
 				611CB2C122110DCF0009C1A0 /* Main.storyboard */,
 				611CB2C422110DD00009C1A0 /* Assets.xcassets */,
 				611CB2C622110DD00009C1A0 /* LaunchScreen.storyboard */,
@@ -432,6 +435,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				611CB2C022110DCF0009C1A0 /* ViewController.swift in Sources */,
+				611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */,
 				611CB2BE22110DCF0009C1A0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
