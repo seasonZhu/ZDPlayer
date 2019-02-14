@@ -9,7 +9,7 @@
 import UIKit
 
 public class PlayerSlider: UISlider {
-    public var progressView: UIProgressView
+    public let progressView: UIProgressView
     
     public override init(frame: CGRect) {
         progressView = UIProgressView()

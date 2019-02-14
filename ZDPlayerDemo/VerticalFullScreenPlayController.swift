@@ -45,26 +45,17 @@ class VerticalFullScreenPlayController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //self.navigationController?.setNavigationBarHidden(true, animated: true)
-        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: false)
         player.play()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //self.navigationController?.setNavigationBarHidden(false, animated: true)
-        UIApplication.shared.setStatusBarHidden(false, with: .none)
         player.pause()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
     }
-    
-    //    @IBAction func changeMedia(_ sender: Any) {
-    //        player.loadVideo(url: url1!)
-    //        player.play()
-    //    }
     
     deinit {
         print("VerticalFullScreenPlayController销毁了")

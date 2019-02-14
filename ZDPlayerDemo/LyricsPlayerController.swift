@@ -23,6 +23,7 @@ class LyricsPlayerController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.white
+        title = String(describing: type(of: self))
         
         if  let srt = Bundle.main.url(forResource: "Despacito Remix Luis Fonsi ft.Daddy Yankee Justin Bieber Lyrics [Spanish]", withExtension: "srt") {
             let playerView = self.player.playerView as! LyricsPlayerView
@@ -45,14 +46,11 @@ class LyricsPlayerController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: false)
         self.player.play()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
-        UIApplication.shared.setStatusBarHidden(false, with: .none)
         self.player.pause()
     }
     

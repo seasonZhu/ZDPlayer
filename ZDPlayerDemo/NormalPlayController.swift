@@ -32,12 +32,13 @@ class NormalPlayController: UIViewController {
 
         player.loadVideo(url: remotURL)
         player.backgroundMode = .proceed
+        
         /*
          可以将两个代理二合一
          */
         player.delegate = self
         //self.player.playerView.delegate = self
-        player.setVideoTitle("China NO.1")
+        player.setVideoTitle("在线视频 测试测吐了 内容太沉重了")
         player.playerView.snp.makeConstraints { (make) in
             make.top.equalTo(view.snp.top).offset(UIApplication.shared.statusBarFrame.height + 44)
             make.left.equalTo(view.snp.left)
