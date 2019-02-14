@@ -470,26 +470,33 @@ extension ZDPlayerView {
     
     /// 添加设备方向变化的通知
     func addDeviceOrientationNotification() {
-        
-        //  这里是为了记录非全屏状态下的frame和superview,便于从全屏退回的时候保持原来的状态
-        NotificationCenter.default.addObserver(forName: UIApplication.willChangeStatusBarOrientationNotification, object: nil, queue: OperationQueue.main) { (notification) in
-            if let userInfo = notification.userInfo, let number = userInfo[UIApplication.statusBarOrientationUserInfoKey] as? Int {
-                let newOrientation = UIDeviceOrientation(rawValue: number)
-                if (self.lastOrientation == .portrait || self.lastOrientation == .unknown || self.lastOrientation == .portraitUpsideDown)
-                    && (newOrientation == .landscapeLeft || newOrientation == .landscapeRight) {
-                    self.parentView = self.superview
-                    self.viewFrame = self.frame
-                    print(self.viewFrame)
-                }
-                
-                self.lastOrientation = newOrientation
-            }
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationWillChange(_:)), name: UIApplication.willChangeStatusBarOrientationNotification, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
     }
     
-    /// 设备方向变化的通知具体实现
+    /// 设备方向即将变化的通知具体实现
+    ///
+    /// - Parameter notification: 通知
+    @objc
+    func deviceOrientationWillChange(_ notification: Notification) {
+        
+        //  这里是为了记录非全屏状态下的frame和superview,便于从全屏退回的时候保持原来的状态
+        
+        if let userInfo = notification.userInfo, let number = userInfo[UIApplication.statusBarOrientationUserInfoKey] as? Int {
+            let newOrientation = UIDeviceOrientation(rawValue: number)
+            if (lastOrientation == .portrait || lastOrientation == .unknown || lastOrientation == .portraitUpsideDown)
+                && (newOrientation == .landscapeLeft || newOrientation == .landscapeRight) {
+                parentView = superview
+                viewFrame = frame
+                print(viewFrame)
+            }
+            
+            lastOrientation = newOrientation
+        }
+    }
+    
+    /// 设备方向已经变化的通知具体实现
     ///
     /// - Parameter notification: 通知
     @objc

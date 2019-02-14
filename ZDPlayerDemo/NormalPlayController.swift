@@ -40,7 +40,6 @@ class NormalPlayController: UIViewController {
             make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
             
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {

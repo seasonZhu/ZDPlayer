@@ -245,7 +245,6 @@ public class ZDPlayer: NSObject {
     deinit {
         print("ZDPlayer销毁了")
         removePlayerNotification()
-        timeObserver = nil
         clearPlayer()
         playerView.removeFromSuperview()
         NotificationCenter.default.removeObserver(self)
