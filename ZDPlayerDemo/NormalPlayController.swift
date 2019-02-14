@@ -11,7 +11,7 @@ import ZDPlayer
 
 class NormalPlayController: UIViewController {
     
-    var player = ZDPlayer()
+    var player: ZDPlayer!
     var url1 : URL?
     
     override func viewDidLoad() {
@@ -20,20 +20,24 @@ class NormalPlayController: UIViewController {
         title = String(describing: type(of: self))
         view.backgroundColor = UIColor.white
         
-        self.url1 = URL(fileURLWithPath: Bundle.main.path(forResource: "2", ofType: "mp4")!)
-        let url = URL(string: "http://lxdqncdn.miaopai.com/stream/6IqHc-OnSMBIt-LQjPJjmA__.mp4?ssig=a81b90fdeca58e8ea15c892a49bce53f&time_stamp=1508166491488")!
-        self.player.replaceVideo(url: url)
-        view.addSubview(self.player.playerView)
+        player = ZDPlayer()
         
+        url1 = URL(fileURLWithPath: Bundle.main.path(forResource: "2", ofType: "mp4")!)
+        let url = URL(string: "http://lxdqncdn.miaopai.com/stream/6IqHc-OnSMBIt-LQjPJjmA__.mp4?ssig=a81b90fdeca58e8ea15c892a49bce53f&time_stamp=1508166491488")!
         let path = PlayerCacheManager.cacheFilePath(for: url)
         print(path)
         
-        self.player.play()
-        self.player.backgroundMode = .proceed
-        self.player.delegate = self
-        self.player.playerView.delegate = self
-        self.player.playerView.titleLabel.text = "China NO.1"
-        self.player.playerView.snp.makeConstraints { (make) in
+        view.addSubview(player.playerView)
+
+        player.loadVideo(url: url)
+        player.backgroundMode = .proceed
+        /*
+         可以将两个代理二合一
+         */
+        player.delegate = self
+        //self.player.playerView.delegate = self
+        player.setVideoTitle("China NO.1")
+        player.playerView.snp.makeConstraints { (make) in
             make.top.equalTo(view.snp.top).offset(UIApplication.shared.statusBarFrame.height + 44)
             make.left.equalTo(view.snp.left)
             make.right.equalTo(view.snp.right)
@@ -46,14 +50,14 @@ class NormalPlayController: UIViewController {
         super.viewWillAppear(animated)
         //self.navigationController?.setNavigationBarHidden(true, animated: true)
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: false)
-        self.player.play()
+        player.play()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         //self.navigationController?.setNavigationBarHidden(false, animated: true)
         UIApplication.shared.setStatusBarHidden(false, with: .none)
-        self.player.pause()
+        player.pause()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -61,7 +65,7 @@ class NormalPlayController: UIViewController {
     }
     
     //    @IBAction func changeMedia(_ sender: Any) {
-    //        player.replaceVideo(url: url1!)
+    //        player.loadVideo(url: url1!)
     //        player.play()
     //    }
     
@@ -71,6 +75,7 @@ class NormalPlayController: UIViewController {
 }
 
 extension NormalPlayController: ZDPlayerDelegate {
+    
     func player(_ player: ZDPlayer, stateDidChange state: PlayState) {
         
     }
@@ -90,19 +95,31 @@ extension NormalPlayController: ZDPlayerDelegate {
     func player(_ player: ZDPlayer, playerFailed error: PlayerError) {
         
     }
+    
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
+        isFullscreen ? print("ZDPlayerDelegate进入全屏") : print("ZDPlayerDelegate退出全屏")
+    }
+    
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressCloseButton button: UIButton) {
+        print("ZDPlayerDelegate点击了关闭按钮")
+    }
+    
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
+        isShowPlayControl ? print("ZDPlayerDelegate显示播放组件") : print("ZDPlayerDelegate隐藏播放组件")
+    }
 }
 
 extension NormalPlayController: ZDPlayerViewDelegate {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
-        
+        isFullscreen ? print("ZDPlayerViewDelegate进入全屏") : print("ZDPlayerViewDelegate退出全屏")
     }
     
     func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {
-        
+        print("ZDPlayerViewDelegate点击了关闭按钮")
     }
     
     func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
-        
+        isShowPlayControl ? print("ZDPlayerViewDelegate显示播放组件") : print("ZDPlayerViewDelegate隐藏播放组件")
     }
     
 }

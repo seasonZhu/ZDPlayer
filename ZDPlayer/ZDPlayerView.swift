@@ -579,7 +579,7 @@ extension ZDPlayerView {
             make.left.equalTo(self)
             make.right.equalTo(self)
             make.top.equalTo(self)
-            make.height.equalTo(64)
+            make.height.equalTo(44)
         }
         
         topView.addSubview(closeButton)
@@ -620,7 +620,7 @@ extension ZDPlayerView {
             make.left.equalTo(self)
             make.right.equalTo(self)
             make.bottom.equalTo(self)
-            make.height.equalTo(52)
+            make.height.equalTo(44)
         }
         
         bottomView.addSubview(playButton)
@@ -677,7 +677,7 @@ extension ZDPlayerView {
     @objc
     func onReplay(_ button: UIButton) {
         guard let player = player, let url = player.contentURL else { return }
-        player.replaceVideo(url: url)
+        player.loadVideo(url: url)
         player.play()
     }
     

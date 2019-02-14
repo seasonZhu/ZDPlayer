@@ -99,6 +99,10 @@ public protocol ZDPlayerDelegate: class {
     func player(_ player: ZDPlayer, bufferStateDidChange state: BufferState)
     func player(_ player: ZDPlayer, bufferDidChange bufferedDuration: TimeInterval, totalDuration: TimeInterval)
     func player(_ player: ZDPlayer, playerFailed error: PlayerError)
+    
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, willFullscreen isFullscreen: Bool)
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressCloseButton button: UIButton)
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool)
 }
 
 // MARK: - ZDPlayer的代理的默认实现
@@ -108,6 +112,10 @@ extension ZDPlayerDelegate {
     func player(_ player: ZDPlayer, bufferStateDidChange state: BufferState) {}
     func player(_ player: ZDPlayer, bufferDidChange bufferedDuration: TimeInterval, totalDuration: TimeInterval) {}
     func player(_ player: ZDPlayer, playerFailed error: PlayerError) {}
+    
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {}
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressCloseButton button: UIButton) {}
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {}
 }
 
 public class ZDPlayer: NSObject {
@@ -257,7 +265,7 @@ extension ZDPlayer {
     /// 替换视频资源
     ///
     /// - Parameter url: 视频资源网址
-    public func replaceVideo(url: URL) {
+    public func loadVideo(url: URL) {
         reloadPlayer()
         mediaFormatt = MediaFormat.analyzeVideoFormat(url: url)
         contentURL = url
@@ -334,6 +342,10 @@ extension ZDPlayer {
             }
         }
     }
+    
+    public func setVideoTitle(_ title: String?) {
+        playerView.titleLabel.text = title
+    }
 }
 
 // MARK: - 私有方法
@@ -342,6 +354,7 @@ extension ZDPlayer {
     /// 配置player
     func setUpPlayer(url: URL) {
         playerView.setPlayer(self)
+        playerView.delegate = self
         playerAsset = AVURLAsset(url: url, options: .none)
         if url.isFileURL, let asset = playerAsset {
             let keys = ["tracks", "playable"]
@@ -536,6 +549,20 @@ extension ZDPlayer {
                 play()
             }
         }
+    }
+}
+
+extension ZDPlayer: ZDPlayerViewDelegate {
+    public func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
+        delegate?.player(self, playerView: playerView, willFullscreen: isFullscreen)
+    }
+
+    public func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {
+        delegate?.player(self, playerView: playerView, didPressCloseButton: button)
+    }
+
+    public func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
+        delegate?.player(self, playerView: playerView, showPlayerControl: isShowPlayControl)
     }
 }
 
