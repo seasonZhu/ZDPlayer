@@ -16,9 +16,9 @@ public protocol ZDPlayerViewDelegate: class {
     
     func playerView(_ playerView: ZDPlayerView, error: PlayerError)
     
-    func playerView(_ playerView: ZDPlayerView, didPressClose button: UIButton)
+    func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton)
 
-    func playerView(_ playerView: ZDPlayerView, didDisplayControl isDisplayControl: Bool)
+    func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayerControl: Bool)
 }
 
 // MARK: - ZDPlayerView的代理的默认实现
@@ -27,9 +27,9 @@ extension ZDPlayerViewDelegate {
     
     func playerView(_ playerView: ZDPlayerView, error: PlayerError) {}
     
-    func playerView(_ playerView: ZDPlayerView, didPressClose button: UIButton) {}
+    func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {}
     
-    func playerView(_ playerView: ZDPlayerView, didDisplayControl isDisplayControl: Bool) {}
+    func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayerControl: Bool) {}
 }
 
 /// ZDPlayerView
@@ -54,10 +54,10 @@ public class ZDPlayerView: UIView {
     public private(set) var isTimeSliding = false
     
     /// 是否显示播放小组件
-    public private(set) var isDisplayControl = true {
+    public private(set) var isShowPlayerControl = true {
         didSet {
-            if isDisplayControl != oldValue {
-                delegate?.playerView(self, didDisplayControl: isDisplayControl)
+            if isShowPlayerControl != oldValue {
+                delegate?.playerView(self, showPlayerControl: isShowPlayerControl)
             }
         }
     }
@@ -130,8 +130,8 @@ public class ZDPlayerView: UIView {
         let soundOff = BundleManager.image(named: "sound_off")
         let soundOn = BundleManager.image(named: "sound_on")
         button.isSelected = false
-        button.setImage(soundOff?.scaledToSize(CGSize(width: 15, height: 15)), for: .normal)
-        button.setImage(soundOn?.scaledToSize(CGSize(width: 15, height: 15)), for: .selected)
+        button.setImage(soundOff, for: .normal)
+        button.setImage(soundOn, for: .selected)
         button.addTarget(self, action: #selector(onSound(_:)), for: .touchUpInside)
         return button
     }()
@@ -153,7 +153,7 @@ public class ZDPlayerView: UIView {
         label.textAlignment = .center
         label.textColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         label.font = UIFont.systemFont(ofSize: 12.0)
-        label.text = "--:-- / --:--"
+        label.text = "--:-- | --:--"
         return label
     }()
     
@@ -169,7 +169,7 @@ public class ZDPlayerView: UIView {
     /// 声音强度条
     public var volumeSlider: UISlider!
     
-    /// 亮度强度条
+    /// 亮度强度条 这个应该会要求自定义
     public var soundSlider: UIView?
     
     /// 滑动手势的方向 默认是横向
@@ -206,18 +206,16 @@ public class ZDPlayerView: UIView {
     /// 进度条滑动的值
     private var sliderSeekTimeValue: TimeInterval = .nan
     
-    /// 定时器
-    private var timer: Timer?
-    
     /// 父view
     private weak var parentView: UIView?
     
     /// 播放器的frame
     private var viewFrame = CGRect.zero
     
-    /// 记录上一次饿手机方位
+    /// 记录上一次的手机方位
     private var lastOrientation: UIDeviceOrientation?
     
+    /// 记录上一次的手机声音值
     private var lastSoundValue: Float = 0
     
     /// 构造函数
@@ -251,8 +249,6 @@ public class ZDPlayerView: UIView {
     /// 析构函数
     deinit {
         print("ZDPlayerView销毁了")
-        timer?.invalidate()
-        timer = nil
         playerLayer?.removeFromSuperlayer()
         NotificationCenter.default.removeObserver(self)
     }
@@ -266,14 +262,14 @@ extension ZDPlayerView {
     public func playStateDidChange(state: PlayerState) {
         playButton.isSelected = state == .playing
         replayButton.isHidden = !(state == .playFinished)
-        replayButton.isHidden = !(state == .playFinished)
         
         if state == .playing || state == .playFinished {
-            setUpTimer()
+            delayPlayControlViewDisappear()
         }
         
         if state == .playFinished {
             loadingIndicator.isHidden = true
+            loadingIndicator.stopAnimating()
         }
     }
     
@@ -296,7 +292,7 @@ extension ZDPlayerView {
         }
         
         if state == .readyToPlay && !isTimeSliding {
-            timeLabel.text = current + " / " + formatSecondsToString(seconds: player.totalDuration)
+            timeLabel.text = current + " | " + formatSecondsToString(seconds: player.totalDuration)
         }
     }
     
@@ -321,7 +317,7 @@ extension ZDPlayerView {
         }
         
         if !isTimeSliding {
-            timeLabel.text = current + " / " +  formatSecondsToString(seconds: totalDuration)
+            timeLabel.text = current + " | " +  formatSecondsToString(seconds: totalDuration)
             timeSlider.value = Float(currentDuration / totalDuration)
         }
     }
@@ -329,7 +325,7 @@ extension ZDPlayerView {
     /// 设置ZDPlayer
     ///
     /// - Parameter player: ZDPlayer
-    public func setZDPlayer(_ player: ZDPlayer) {
+    public func setPlayer(_ player: ZDPlayer) {
         self.player = player
     }
     
@@ -342,7 +338,7 @@ extension ZDPlayerView {
         isTimeSliding = false
         loadingIndicator.isHidden = false
         loadingIndicator.startAnimating()
-        timeLabel.text = "--:-- / --:--"
+        timeLabel.text = "--:-- | --:--"
         reloadLayer()
     }
     
@@ -365,8 +361,8 @@ extension ZDPlayerView {
     /// 播放组件展示
     ///
     /// - Parameter isShow: 是否展示
-    public func displayControlViewShow(_ isShow: Bool) {
-        isShow ? displayControlAnimation() : hiddenControlAnimation()
+    public func playControlViewShow(_ isShow: Bool) {
+        isShow ? showPlayerControlAnimation() : hiddenPlayerControlAnimation()
     }
     
     /// 更新PlayerView的frame
@@ -421,23 +417,22 @@ extension ZDPlayerView {
         playButton.isSelected = false
     }
     
-    /// 组件动画展示
-    func displayControlAnimation() {
+    /// 播放组件动画展示
+    func showPlayerControlAnimation() {
         bottomView.isHidden = false
         topView.isHidden = false
-        isDisplayControl = true
+        isShowPlayerControl = true
         UIView.animate(withDuration: 0.5, animations: {
             self.bottomView.alpha = 1
             self.topView.alpha = 1
         }) { (_) in
-            self.setUpTimer()
+            self.delayPlayControlViewDisappear()
         }
     }
     
-    /// 组件动画隐藏
-    func hiddenControlAnimation() {
-        timer?.invalidate()
-        isDisplayControl = false
+    /// 播放组件动画隐藏
+    func hiddenPlayerControlAnimation() {
+        isShowPlayerControl = false
         UIView.animate(withDuration: 0.5, animations: {
             self.bottomView.alpha = 0
             self.topView.alpha = 0
@@ -447,11 +442,10 @@ extension ZDPlayerView {
         }
     }
     
-    /// 定时器配置
-    func setUpTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(timeInterval: controlViewDuration, repeats: false) { [weak self] in
-            self?.displayControlViewShow(false)
+    /// 延迟播放组件消失
+    func delayPlayControlViewDisappear() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + controlViewDuration) {
+            self.playControlViewShow(false)
         }
     }
     
@@ -504,7 +498,8 @@ extension ZDPlayerView {
     /// 设备方向变化的通知具体实现
     ///
     /// - Parameter notification: 通知
-    @objc func deviceOrientationDidChange(_ notification: Notification) {
+    @objc
+    func deviceOrientationDidChange(_ notification: Notification) {
         let orientation = UIDevice.current.orientation
         switch orientation {
         case .landscapeLeft, .landscapeRight:
@@ -524,8 +519,10 @@ extension ZDPlayerView {
     func onDeviceOrientation(isFullScreen: Bool, orientation: UIDeviceOrientation) {
         if orientation == .landscapeLeft || orientation == .landscapeRight {
             let rectInWindow = convert(bounds, to: UIApplication.shared.keyWindow)
-            removeFromSuperview()
             frame = rectInWindow
+            
+            removeFromSuperview()
+            
             UIApplication.shared.keyWindow?.addSubview(self)
             guard let superview = self.superview else {
                 return
@@ -688,7 +685,7 @@ extension ZDPlayerView {
     /// - Parameter button: 按钮
     @objc
     func onClose(_ button: UIButton) {
-        delegate?.playerView(self, didPressClose: button)
+        delegate?.playerView(self, didPressCloseButton: button)
     }
     
     /// 全屏按钮的点击事件
@@ -713,9 +710,10 @@ extension ZDPlayerView {
     @objc
     func timeSliderValueChanged(_ sender: PlayerSlider) {
         isTimeSliding = true
-        if let duration = player?.totalDuration {
-            let currentTime = Double(sender.value) * duration
-            timeLabel.text = formatSecondsToString(seconds: currentTime) + " / " +  formatSecondsToString(seconds: duration)
+        
+        if let totalDuration = player?.totalDuration {
+            let currentTime = Double(sender.value) * totalDuration
+            timeLabel.text = formatSecondsToString(seconds: currentTime) + " | " +  formatSecondsToString(seconds: totalDuration)
         }
     }
     
@@ -726,15 +724,15 @@ extension ZDPlayerView {
     func timeSliderTouchUpInside(_ sender: PlayerSlider) {
         isTimeSliding = true
         
-        if let duration = player?.totalDuration {
-            let currentTime = Double(sender.value) * duration
+        if let totalDuration = player?.totalDuration {
+            let currentTime = Double(sender.value) * totalDuration
             player?.seekTime(currentTime) { [weak self] (finished) in
                 if finished {
                     self?.isTimeSliding = false
-                    self?.setUpTimer()
+                    self?.delayPlayControlViewDisappear()
                 }
             }
-            timeLabel.text = formatSecondsToString(seconds: currentTime) + " / " +  formatSecondsToString(seconds: duration)
+            timeLabel.text = formatSecondsToString(seconds: currentTime) + " | " +  formatSecondsToString(seconds: totalDuration)
         }
     }
     
@@ -744,7 +742,6 @@ extension ZDPlayerView {
     @objc
     func timeSliderTouchDown(_ sender: PlayerSlider) {
         isTimeSliding = true
-        timer?.invalidate()
     }
 }
 
@@ -765,8 +762,8 @@ extension ZDPlayerView {
     /// - Parameter tap: 手势
     @objc
     func onSingleTapGesture(_ tap: UITapGestureRecognizer) {
-        isDisplayControl = !isDisplayControl
-        displayControlViewShow(isDisplayControl)
+        isShowPlayerControl = !isShowPlayerControl
+        playControlViewShow(isShowPlayerControl)
     }
     
     /// 双击手势
@@ -834,7 +831,7 @@ extension ZDPlayerView {
                 }
                 player?.seekTime(sliderSeekTimeValue) { [weak self] (finished) in
                     self?.isTimeSliding = false
-                    self?.setUpTimer()
+                    self?.delayPlayControlViewDisappear()
                 }
             case .vertical:
                 isVolume = false
@@ -849,9 +846,8 @@ extension ZDPlayerView {
     /// - Parameter veocityX: 滑动x的偏移
     /// - Returns: 时间
     func onPanGestureHorizontal(velocityX: CGFloat) -> TimeInterval {
-        displayControlViewShow(true)
+        playControlViewShow(true)
         isTimeSliding = true
-        timer?.invalidate()
         let value = timeSlider.value
         if let _ = player?.currentDuration, let totalDuration = player?.totalDuration {
             let sliderValue = TimeInterval(value) * totalDuration + TimeInterval(velocityX) / 100.0 * (TimeInterval(totalDuration) / 400)

@@ -102,11 +102,11 @@ extension NormalPlayController: ZDPlayerViewDelegate {
         
     }
     
-    func playerView(_ playerView: ZDPlayerView, didPressClose button: UIButton) {
+    func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {
         
     }
     
-    func playerView(_ playerView: ZDPlayerView, didDisplayControl isDisplayControl: Bool) {
+    func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
         
     }
     

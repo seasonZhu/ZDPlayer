@@ -342,7 +342,7 @@ extension ZDPlayer {
     
     /// 配置player
     func setUpPlayer(url: URL) {
-        playerView.setZDPlayer(self)
+        playerView.setPlayer(self)
         playerAsset = AVURLAsset(url: url, options: .none)
         if url.isFileURL, let asset = playerAsset {
             let keys = ["tracks", "playable"]
