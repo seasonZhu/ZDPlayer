@@ -14,8 +14,6 @@ import SnapKit
 public protocol ZDPlayerViewDelegate: class {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool)
     
-    func playerView(_ playerView: ZDPlayerView, error: PlayerError)
-    
     func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton)
 
     func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayerControl: Bool)
@@ -24,8 +22,6 @@ public protocol ZDPlayerViewDelegate: class {
 // MARK: - ZDPlayerView的代理的默认实现
 extension ZDPlayerViewDelegate {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {}
-    
-    func playerView(_ playerView: ZDPlayerView, error: PlayerError) {}
     
     func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {}
     
@@ -259,7 +255,7 @@ extension ZDPlayerView {
     /// 播放状态已经改变
     ///
     /// - Parameter state: 播放状态
-    public func playStateDidChange(state: PlayerState) {
+    public func playStateDidChange(state: PlayState) {
         playButton.isSelected = state == .playing
         replayButton.isHidden = !(state == .playFinished)
         
@@ -276,7 +272,7 @@ extension ZDPlayerView {
     /// 缓冲状态已经改变
     ///
     /// - Parameter state: 缓冲状态
-    public func bufferStateDidChange(state: PlayerBufferState) {
+    public func bufferStateDidChange(state: BufferState) {
         if state == .buffering {
             loadingIndicator.isHidden = false
             loadingIndicator.startAnimating()
@@ -386,7 +382,7 @@ extension ZDPlayerView {
     ///
     /// - Parameter error: 错误
     public func playFailed(error: PlayerError) {
-        delegate?.playerView(self, error: error)
+        
     }
     
     /// 时间格式化为字符串
@@ -491,8 +487,6 @@ extension ZDPlayerView {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
-        
-        
     }
     
     /// 设备方向变化的通知具体实现

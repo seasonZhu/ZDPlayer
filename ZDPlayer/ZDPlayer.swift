@@ -16,7 +16,7 @@ import AVFoundation
 /// - pause: 暂停
 /// - playFinished: 播放完成
 /// - error: 错误
-public enum PlayerState {
+public enum PlayState {
     case none
     case playing
     case pause
@@ -31,7 +31,7 @@ public enum PlayerState {
 /// - buffering: 正在缓冲
 /// - stop: 停止
 /// - bufferFinished: 缓冲完成
-public enum PlayerBufferState {
+public enum BufferState {
     case none
     case readyToPlay
     case buffering
@@ -44,7 +44,7 @@ public enum PlayerBufferState {
 /// - suspend: 挂起
 /// - autoPlayAndPaused: 自动播放和停止
 /// - proceed: 前进
-public enum PlayerBackgroundMode {
+public enum BackgroundMode {
     case suspend
     case autoPlayAndPaused
     case proceed
@@ -94,18 +94,18 @@ public enum MediaFormat: String{
 
 /// ZDPlayer的代理
 public protocol ZDPlayerDelegate: class {
-    func player(_ player: ZDPlayer, stateDidChange state: PlayerState)
+    func player(_ player: ZDPlayer, stateDidChange state: PlayState)
     func player(_ player: ZDPlayer, playerDurationDidChange currentDuration: TimeInterval, totalDuration: TimeInterval)
-    func player(_ player: ZDPlayer, bufferStateDidChange state: PlayerBufferState)
+    func player(_ player: ZDPlayer, bufferStateDidChange state: BufferState)
     func player(_ player: ZDPlayer, bufferDidChange bufferedDuration: TimeInterval, totalDuration: TimeInterval)
     func player(_ player: ZDPlayer, playerFailed error: PlayerError)
 }
 
 // MARK: - ZDPlayer的代理的默认实现
 extension ZDPlayerDelegate {
-    func player(_ player: ZDPlayer, stateDidChange state: PlayerState) {}
+    func player(_ player: ZDPlayer, stateDidChange state: PlayState) {}
     func player(_ player: ZDPlayer, playerDurationDidChange currentDuration: TimeInterval, totalDuration: TimeInterval) {}
-    func player(_ player: ZDPlayer, bufferStateDidChange state: PlayerBufferState) {}
+    func player(_ player: ZDPlayer, bufferStateDidChange state: BufferState) {}
     func player(_ player: ZDPlayer, bufferDidChange bufferedDuration: TimeInterval, totalDuration: TimeInterval) {}
     func player(_ player: ZDPlayer, playerFailed error: PlayerError) {}
 }
@@ -119,7 +119,7 @@ public class ZDPlayer: NSObject {
     public var playerView: ZDPlayerView
     
     /// 播放状态
-    public var state: PlayerState = .none {
+    public var state: PlayState = .none {
         didSet {
             if state != oldValue {
                 playerView.playStateDidChange(state: state)
@@ -129,7 +129,7 @@ public class ZDPlayer: NSObject {
     }
     
     /// 缓冲状态
-    public var bufferState: PlayerBufferState = .none {
+    public var bufferState: BufferState = .none {
         didSet {
             if bufferState != oldValue {
                 playerView.bufferStateDidChange(state: bufferState)
@@ -142,7 +142,7 @@ public class ZDPlayer: NSObject {
     public var videoGravity: AVLayerVideoGravity = .resizeAspect
     
     /// 后台播放模式
-    public var backgroundMode: PlayerBackgroundMode = .autoPlayAndPaused
+    public var backgroundMode: BackgroundMode = .autoPlayAndPaused
     
     /// 缓冲的最短时间
     public var bufferInterval: TimeInterval = 2.0
@@ -157,7 +157,7 @@ public class ZDPlayer: NSObject {
     public private(set) var currentDuration : TimeInterval = 0.0
     
     /// 是否正在缓冲
-    public private(set) var buffering = false
+    public private(set) var isBuffering = false
     
     /// AVPlayer
     public private(set) var player: AVPlayer? {
@@ -196,11 +196,10 @@ public class ZDPlayer: NSObject {
     private var timeObserver: Any?
     
     /// 是否在进行视频时间轴的寻找
-    private var seeking = false
+    private var isSeeking = false
     
     /// 资源管理器
     private let resourceLoaderManager: PlayerResourceLoaderManager
-    
     
     /// 初始化方法
     ///
@@ -246,6 +245,7 @@ public class ZDPlayer: NSObject {
     deinit {
         print("ZDPlayer销毁了")
         removePlayerNotification()
+        timeObserver = nil
         clearPlayer()
         playerView.removeFromSuperview()
         NotificationCenter.default.removeObserver(self)
@@ -267,13 +267,13 @@ extension ZDPlayer {
     
     /// 重新加载Player
     public func reloadPlayer() {
-        seeking = false
+        isSeeking = false
         totalDuration = 0.0
         currentDuration = 0.0
         error = PlayerError()
         state = .none
         bufferState = .none
-        buffering = false
+        isBuffering = false
         clearPlayer()
     }
     
@@ -323,13 +323,13 @@ extension ZDPlayer {
         }
         
         DispatchQueue.main.async {
-            self.seeking = true
+            self.isSeeking = true
             self.startPlayerBuffering()
-            self.playerItem?.seek(to: CMTimeMakeWithSeconds(time, preferredTimescale: Int32(NSEC_PER_SEC))) { (finished) in
+            self.playerItem?.seek(to: CMTimeMakeWithSeconds(time, preferredTimescale: Int32(NSEC_PER_SEC))) { [weak self] (finished) in
                 DispatchQueue.main.async {
-                    self.seeking = false
-                    self.stopPlayerBuffering()
-                    self.play()
+                    self?.isSeeking = false
+                    self?.stopPlayerBuffering()
+                    self?.play()
                     completion?(finished)
                 }
             }
@@ -365,13 +365,13 @@ extension ZDPlayer {
     func startPlayerBuffering() {
         pause()
         bufferState = .buffering
-        buffering = true
+        isBuffering = true
     }
     
     /// 停止缓冲
     func stopPlayerBuffering() {
         bufferState = .stop
-        buffering = false
+        isBuffering = false
     }
     
     /// 收集错误日志
@@ -527,10 +527,10 @@ extension ZDPlayer {
                     
                     if bufferTime - currentTime < bufferInterval {
                         bufferState = .buffering
-                        buffering = true
+                        isBuffering = true
                     }else {
                         bufferState = .readyToPlay
-                        buffering = false
+                        isBuffering = false
                     }
                 }
             }else {

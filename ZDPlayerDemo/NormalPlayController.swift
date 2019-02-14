@@ -72,7 +72,7 @@ class NormalPlayController: UIViewController {
 }
 
 extension NormalPlayController: ZDPlayerDelegate {
-    func player(_ player: ZDPlayer, stateDidChange state: PlayerState) {
+    func player(_ player: ZDPlayer, stateDidChange state: PlayState) {
         
     }
     
@@ -80,7 +80,7 @@ extension NormalPlayController: ZDPlayerDelegate {
         
     }
     
-    func player(_ player: ZDPlayer, bufferStateDidChange state: PlayerBufferState) {
+    func player(_ player: ZDPlayer, bufferStateDidChange state: BufferState) {
         
     }
     
@@ -95,10 +95,6 @@ extension NormalPlayController: ZDPlayerDelegate {
 
 extension NormalPlayController: ZDPlayerViewDelegate {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
-        
-    }
-    
-    func playerView(_ playerView: ZDPlayerView, error: PlayerError) {
         
     }
     
