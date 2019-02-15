@@ -13,7 +13,10 @@ class NormalPlayController: UIViewController {
     
     var player: ZDPlayer!
     var localURL: URL!
-    var remotURL: URL!
+    var remoteURL: URL!
+    
+    var number = 1
+    var num = 2
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,13 +27,13 @@ class NormalPlayController: UIViewController {
         player = ZDPlayer()
         
         localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "2", ofType: "mp4")!)
-        remotURL = URL(string: "http://lxdqncdn.miaopai.com/stream/6IqHc-OnSMBIt-LQjPJjmA__.mp4?ssig=a81b90fdeca58e8ea15c892a49bce53f&time_stamp=1508166491488")!
-        let path = PlayerCacheManager.cacheFilePath(for: remotURL)
+        remoteURL = URL(string: "http://lxdqncdn.miaopai.com/stream/6IqHc-OnSMBIt-LQjPJjmA__.mp4?ssig=a81b90fdeca58e8ea15c892a49bce53f&time_stamp=1508166491488")!
+        let path = PlayerCacheManager.cacheFilePath(for: remoteURL)
         print(path)
         
         view.addSubview(player.playerView)
 
-        player.loadVideo(url: remotURL)
+        player.loadVideo(url: remoteURL)
         player.backgroundMode = .proceed
         
         /*
@@ -44,6 +47,18 @@ class NormalPlayController: UIViewController {
             make.left.equalTo(view.snp.left)
             make.right.equalTo(view.snp.right)
             make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
+        }
+        
+        /*
+         这样使用通知会导致循环引用
+         但是使用GCD不会,需要注意
+         */
+//        NotificationCenter.default.addObserver(forName: UIApplication.willChangeStatusBarOrientationNotification, object: nil, queue: nil) { (_) in
+//            self.num = self.number
+//        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.num = self.number
         }
     }
     

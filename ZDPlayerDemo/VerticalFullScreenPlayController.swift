@@ -13,7 +13,7 @@ class VerticalFullScreenPlayController: UIViewController {
     
     var player: ZDPlayer!
     var localURL: URL!
-    var remotURL: URL!
+    var remoteURL: URL!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,17 +24,18 @@ class VerticalFullScreenPlayController: UIViewController {
         player = ZDPlayer()
         
         localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "2", ofType: "mp4")!)
-        remotURL = URL(string: "http://lxdqncdn.miaopai.com/stream/6IqHc-OnSMBIt-LQjPJjmA__.mp4?ssig=a81b90fdeca58e8ea15c892a49bce53f&time_stamp=1508166491488")!
-        let path = PlayerCacheManager.cacheFilePath(for: remotURL)
+        remoteURL = URL(string: "https://github.com/seasonZhu/ZDLaunchAdKit/blob/master/ZDLaunchAdDemo/Source/video1.mp4?raw=true")!
+        let path = PlayerCacheManager.cacheFilePath(for: remoteURL)
         print(path)
         
         view.addSubview(player.playerView)
         
-        player.loadVideo(url: localURL)
+        player.loadVideo(url: remoteURL)
         player.backgroundMode = .proceed
  
         player.delegate = self
-        player.setVideoTitle("The Song")
+        player.setVideoTitle(remoteURL.lastPathComponent)
+        player.playerView.closeButton.isHidden = true
         player.playerView.snp.makeConstraints { (make) in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.left.equalTo(view.snp.left)

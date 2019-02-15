@@ -360,17 +360,22 @@ extension ZDPlayer {
             let keys = ["tracks", "playable"]
             playerItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: keys)
         }else {
-            let urlAsset = AVURLAsset(url: url)
-            let playerItem = AVPlayerItem(asset: urlAsset)
-            
-            if #available(iOS 9.0, *) {
-                playerItem.canUseNetworkResourcesForLiveStreamingWhilePaused = true
-            }
             //playerItem = resourceLoaderManager.playerItem(url: url)
-            self.playerItem = playerItem
+            playerItem = noCacheManagerGetPlayerItem(url: url)
         }
         player = AVPlayer(playerItem: playerItem)
         playerView.reloadView()
+    }
+    
+    /// 无缓存的加载在线视频策略
+    func noCacheManagerGetPlayerItem(url: URL) -> AVPlayerItem {
+        let urlAsset = AVURLAsset(url: url)
+        let playerItem = AVPlayerItem(asset: urlAsset)
+        
+        if #available(iOS 9.0, *) {
+            playerItem.canUseNetworkResourcesForLiveStreamingWhilePaused = true
+        }
+        return playerItem
     }
     
     /// 开始缓冲
@@ -552,6 +557,7 @@ extension ZDPlayer {
     }
 }
 
+// MARK: - 实现ZDPlayerViewDelegate的方法
 extension ZDPlayer: ZDPlayerViewDelegate {
     public func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
         delegate?.player(self, playerView: playerView, willFullscreen: isFullscreen)

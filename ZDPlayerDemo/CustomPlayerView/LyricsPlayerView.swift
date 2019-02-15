@@ -46,14 +46,6 @@ class LyricsPlayerView: ZDPlayerView {
             make.centerY.equalTo(closeButton)
         }
 
-        addSubview(bottomProgressView)
-        bottomProgressView.snp.makeConstraints { (make) in
-            make.left.equalTo(self.snp.left)
-            make.right.equalTo(self.snp.right)
-            make.bottom.equalTo(bottomView.snp.top)
-            make.height.equalTo(3)
-        }
-        
         mirrorFlipButton.tintColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1)
         mirrorFlipButton.setTitle("开启镜像", for: .normal)
         mirrorFlipButton.setTitle("关闭镜像", for: .selected)
@@ -79,6 +71,14 @@ class LyricsPlayerView: ZDPlayerView {
             make.left.equalTo(self).offset(5)
             make.bottom.equalTo(snp.bottom).offset(-10)
             make.centerX.equalTo(self)
+        }
+        
+        addSubview(bottomProgressView)
+        bottomProgressView.snp.makeConstraints { (make) in
+            make.left.equalTo(self.snp.left)
+            make.right.equalTo(self.snp.right)
+            make.bottom.equalTo(subtitlesLabel.snp.top)
+            make.height.equalTo(3)
         }
     }
     
