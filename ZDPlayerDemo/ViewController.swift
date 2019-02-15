@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayerController", "Mp3PlayController", "Embed in cell of tableView"]
+    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayController", "Mp3PlayController", "EmbedTableViewController"]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds, style: .plain)
@@ -59,7 +59,7 @@ extension ViewController: UITableViewDelegate {
         case 3:
             navigationController?.pushViewController(Mp3PlayController(), animated: true)
         default:
-            break
+            navigationController?.pushViewController(EmbedTableViewController(), animated: true)
         }
     }
 }

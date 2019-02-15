@@ -46,6 +46,9 @@
 		611CB32022164E480009C1A0 /* music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 611CB31F22164E480009C1A0 /* music.mp3 */; };
 		611CB322221653060009C1A0 /* Mp3PlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB321221653060009C1A0 /* Mp3PlayController.swift */; };
 		611CB324221656190009C1A0 /* saber.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 611CB323221656190009C1A0 /* saber.mp3 */; };
+		611CB326221668510009C1A0 /* EmbedPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB325221668510009C1A0 /* EmbedPlayerView.swift */; };
+		611CB32822166BD00009C1A0 /* VideoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB32722166BD00009C1A0 /* VideoCell.swift */; };
+		611CB32A22166C5A0009C1A0 /* EmbedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB32922166C5A0009C1A0 /* EmbedTableViewController.swift */; };
 		984D5185E9ED91A87F470F36 /* Pods_ZDPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CB3D88CE67CB53ECEAFBD2 /* Pods_ZDPlayer.framework */; };
 		A797B880C64A95FF458A20EA /* Pods_ZDPlayerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156BBD63BCE25DE99D29D01C /* Pods_ZDPlayerDemo.framework */; };
 /* End PBXBuildFile section */
@@ -122,6 +125,9 @@
 		611CB31F22164E480009C1A0 /* music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music.mp3; sourceTree = "<group>"; };
 		611CB321221653060009C1A0 /* Mp3PlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mp3PlayController.swift; sourceTree = "<group>"; };
 		611CB323221656190009C1A0 /* saber.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = saber.mp3; sourceTree = "<group>"; };
+		611CB325221668510009C1A0 /* EmbedPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbedPlayerView.swift; sourceTree = "<group>"; };
+		611CB32722166BD00009C1A0 /* VideoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCell.swift; sourceTree = "<group>"; };
+		611CB32922166C5A0009C1A0 /* EmbedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbedTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +193,7 @@
 				611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */,
 				611CB31D22155BC10009C1A0 /* LyricsPlayController.swift */,
 				611CB321221653060009C1A0 /* Mp3PlayController.swift */,
+				611CB32922166C5A0009C1A0 /* EmbedTableViewController.swift */,
 				611CB2C122110DCF0009C1A0 /* Main.storyboard */,
 				611CB2C422110DD00009C1A0 /* Assets.xcassets */,
 				611CB2C622110DD00009C1A0 /* LaunchScreen.storyboard */,
@@ -257,6 +264,8 @@
 			isa = PBXGroup;
 			children = (
 				611CB31B221557BF0009C1A0 /* LyricsPlayerView.swift */,
+				611CB325221668510009C1A0 /* EmbedPlayerView.swift */,
+				611CB32722166BD00009C1A0 /* VideoCell.swift */,
 			);
 			path = CustomPlayerView;
 			sourceTree = "<group>";
@@ -464,9 +473,12 @@
 			files = (
 				611CB319221553E20009C1A0 /* VerticalFullScreenPlayController.swift in Sources */,
 				611CB31C221557BF0009C1A0 /* LyricsPlayerView.swift in Sources */,
+				611CB32822166BD00009C1A0 /* VideoCell.swift in Sources */,
 				611CB2C022110DCF0009C1A0 /* ViewController.swift in Sources */,
 				611CB322221653060009C1A0 /* Mp3PlayController.swift in Sources */,
 				611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */,
+				611CB326221668510009C1A0 /* EmbedPlayerView.swift in Sources */,
+				611CB32A22166C5A0009C1A0 /* EmbedTableViewController.swift in Sources */,
 				611CB2BE22110DCF0009C1A0 /* AppDelegate.swift in Sources */,
 				611CB31E22155BC10009C1A0 /* LyricsPlayController.swift in Sources */,
 			);
