@@ -303,6 +303,14 @@ extension ZDPlayer {
         if contentURL == nil {
             return
         }
+        
+        // 播放完毕实际上是再重播一次的操作
+        if state == .playFinished {
+            playerView.onReplay(playerView.replayButton)
+            state = .playing
+            return
+        }
+        
         player?.play()
         state = .playing
         playerView.play()

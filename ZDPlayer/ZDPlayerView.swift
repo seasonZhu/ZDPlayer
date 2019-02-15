@@ -248,7 +248,7 @@ open class ZDPlayerView: UIView {
     
     /// 析构函数
     deinit {
-        print("ZDPlayerView销毁了")
+        print("\(String(describing: type(of: self)))销毁了")
         timer?.invalidate()
         timer = nil
         playerLayer?.removeFromSuperlayer()
