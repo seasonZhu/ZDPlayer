@@ -10,7 +10,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayerController", "Custom Player 2", "Embed in cell of tableView"]
+    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayerController", "Mp3PlayController", "Embed in cell of tableView"]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds, style: .plain)
@@ -49,16 +49,17 @@ extension ViewController: UITableViewDataSource {
 extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.row == 0 {
+        switch indexPath.row {
+        case 0:
             navigationController?.pushViewController(NormalPlayController(), animated: true)
-        } else if indexPath.row == 1{
+        case 1:
             navigationController?.pushViewController(VerticalFullScreenPlayController(), animated: true)
-        } else if indexPath.row == 2 {
+        case 2:
             navigationController?.pushViewController(LyricsPlayerController(), animated: true)
-        } else if indexPath.row == 3 {
-            
-        } else {
-            
+        case 3:
+            navigationController?.pushViewController(Mp3PlayController(), animated: true)
+        default:
+            break
         }
     }
 }
