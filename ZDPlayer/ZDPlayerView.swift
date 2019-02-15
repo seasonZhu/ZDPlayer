@@ -166,7 +166,7 @@ open class ZDPlayerView: UIView {
     public var volumeSlider: UISlider!
     
     /// 亮度强度条 这个应该会要求自定义
-    public var soundSlider: UIView?
+    public var brightnessSlider: BrightnessView?
     
     /// 滑动手势的方向 默认是横向
     public private(set) var panGestureDirection : NSLayoutConstraint.Axis = .horizontal
@@ -227,6 +227,7 @@ open class ZDPlayerView: UIView {
         addDeviceOrientationNotification()
         addGestureRecognizer()
         getVolumeSlider()
+        getBrightnessSlider()
         setUpUI()
     }
     
@@ -475,6 +476,8 @@ extension ZDPlayerView {
         /*
          这个好像获取不到系统的 需要自己封装呀
          */
+        brightnessSlider = BrightnessView.share
+        UIApplication.shared.keyWindow?.addSubview(brightnessSlider!)
     }
 }
 
@@ -818,8 +821,35 @@ extension ZDPlayerView {
                     panGestureDirection = .horizontal
                     return
                 }
+            }else {
+                
             }
         case .changed:
+            
+            // begin状态时候 可以监听到,但是x与y的值都是0,根本无法判断是横滑动还是竖滑动
+            let x = abs(translation.x)
+            let y = abs(translation.y)
+            
+            // 纵向滑动
+            if x < y {
+                panGestureDirection = .vertical
+                // 视频层的右半边为声音控制,左半边为亮度控制
+                if location.x > bounds.width / 2 {
+                    isVolume = true
+                }else {
+                    isVolume = false
+                }
+            }
+                //  横向滑动
+            else if x > y {
+                guard player?.mediaFormatt == .m3u8 else {
+                    panGestureDirection = .horizontal
+                    return
+                }
+            }else {
+                
+            }
+            
             switch panGestureDirection {
             case .horizontal:
                 if player?.currentDuration == 0 {
@@ -872,6 +902,9 @@ extension ZDPlayerView {
         if isVolume {
             volumeSlider.value -= Float(velocityY / 10000)
             lastSoundValue = volumeSlider.value
+            if BrightnessView.share.alpha == 1 {
+                BrightnessView.share.alpha = 0
+            }
         }else {
             UIScreen.main.brightness -= velocityY / 10000
         }

@@ -49,6 +49,7 @@
 		611CB326221668510009C1A0 /* EmbedPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB325221668510009C1A0 /* EmbedPlayerView.swift */; };
 		611CB32822166BD00009C1A0 /* VideoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB32722166BD00009C1A0 /* VideoCell.swift */; };
 		611CB32A22166C5A0009C1A0 /* EmbedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB32922166C5A0009C1A0 /* EmbedTableViewController.swift */; };
+		61D43A3B2216A9A90095B667 /* BrightnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D43A3A2216A9A90095B667 /* BrightnessView.swift */; };
 		984D5185E9ED91A87F470F36 /* Pods_ZDPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CB3D88CE67CB53ECEAFBD2 /* Pods_ZDPlayer.framework */; };
 		A797B880C64A95FF458A20EA /* Pods_ZDPlayerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156BBD63BCE25DE99D29D01C /* Pods_ZDPlayerDemo.framework */; };
 /* End PBXBuildFile section */
@@ -128,6 +129,7 @@
 		611CB325221668510009C1A0 /* EmbedPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbedPlayerView.swift; sourceTree = "<group>"; };
 		611CB32722166BD00009C1A0 /* VideoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCell.swift; sourceTree = "<group>"; };
 		611CB32922166C5A0009C1A0 /* EmbedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbedTableViewController.swift; sourceTree = "<group>"; };
+		61D43A3A2216A9A90095B667 /* BrightnessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 				611CB3022212A15A0009C1A0 /* PlayerSlider.swift */,
 				611CB3002212A0FA0009C1A0 /* PlayerError.swift */,
 				611CB3092212A6B70009C1A0 /* Subtitles.swift */,
+				61D43A3A2216A9A90095B667 /* BrightnessView.swift */,
 				611CB2E122110DF80009C1A0 /* PlayerCache */,
 				611CB3062212A42D0009C1A0 /* Resources */,
 				611CB2D622110DE20009C1A0 /* ZDPlayer.h */,
@@ -497,6 +500,7 @@
 				611CB30A2212A6B70009C1A0 /* Subtitles.swift in Sources */,
 				611CB2E7221114790009C1A0 /* PlayerCacheManager.swift in Sources */,
 				611CB2F72212737B0009C1A0 /* PlayerResourceLoaderManager.swift in Sources */,
+				61D43A3B2216A9A90095B667 /* BrightnessView.swift in Sources */,
 				611CB3032212A15A0009C1A0 /* PlayerSlider.swift in Sources */,
 				611CB2EB221119E80009C1A0 /* PlayerCacheMediaConfiguration.swift in Sources */,
 				611CB2F3221169140009C1A0 /* PlayerDownloaderManager.swift in Sources */,
