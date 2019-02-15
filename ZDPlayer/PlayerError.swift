@@ -9,6 +9,7 @@
 import Foundation
 import AVFoundation
 
+/// 播放错误
 public struct PlayerError {
     var error: Error?
     var playerItemErrorLogEvent : [AVPlayerItemErrorLogEvent]?

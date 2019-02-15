@@ -360,15 +360,15 @@ extension ZDPlayer {
             let keys = ["tracks", "playable"]
             playerItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: keys)
         }else {
-            //playerItem = resourceLoaderManager.playerItem(url: url)
             playerItem = noCacheManagerGetPlayerItem(url: url)
+            //playerItem = cacheManagerGetPlayerItem(url: url)
         }
         player = AVPlayer(playerItem: playerItem)
         playerView.reloadView()
     }
     
     /// 无缓存的加载在线视频策略
-    func noCacheManagerGetPlayerItem(url: URL) -> AVPlayerItem {
+    func noCacheManagerGetPlayerItem(url: URL) -> AVPlayerItem? {
         let urlAsset = AVURLAsset(url: url)
         let playerItem = AVPlayerItem(asset: urlAsset)
         
@@ -376,6 +376,11 @@ extension ZDPlayer {
             playerItem.canUseNetworkResourcesForLiveStreamingWhilePaused = true
         }
         return playerItem
+    }
+    
+    /// 有缓存的加载在线视频策略
+    func cacheManagerGetPlayerItem(url: URL) -> AVPlayerItem? {
+        return resourceLoaderManager.playerItem(url: url)
     }
     
     /// 开始缓冲

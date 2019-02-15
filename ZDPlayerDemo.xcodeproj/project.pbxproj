@@ -42,7 +42,7 @@
 		611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB316221515410009C1A0 /* NormalPlayController.swift */; };
 		611CB319221553E20009C1A0 /* VerticalFullScreenPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */; };
 		611CB31C221557BF0009C1A0 /* LyricsPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB31B221557BF0009C1A0 /* LyricsPlayerView.swift */; };
-		611CB31E22155BC10009C1A0 /* LyricsPlayerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB31D22155BC10009C1A0 /* LyricsPlayerController.swift */; };
+		611CB31E22155BC10009C1A0 /* LyricsPlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB31D22155BC10009C1A0 /* LyricsPlayController.swift */; };
 		611CB32022164E480009C1A0 /* music.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 611CB31F22164E480009C1A0 /* music.mp3 */; };
 		984D5185E9ED91A87F470F36 /* Pods_ZDPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37CB3D88CE67CB53ECEAFBD2 /* Pods_ZDPlayer.framework */; };
 		A797B880C64A95FF458A20EA /* Pods_ZDPlayerDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156BBD63BCE25DE99D29D01C /* Pods_ZDPlayerDemo.framework */; };
@@ -116,7 +116,7 @@
 		611CB316221515410009C1A0 /* NormalPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NormalPlayController.swift; sourceTree = "<group>"; };
 		611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalFullScreenPlayController.swift; sourceTree = "<group>"; };
 		611CB31B221557BF0009C1A0 /* LyricsPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsPlayerView.swift; sourceTree = "<group>"; };
-		611CB31D22155BC10009C1A0 /* LyricsPlayerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsPlayerController.swift; sourceTree = "<group>"; };
+		611CB31D22155BC10009C1A0 /* LyricsPlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LyricsPlayController.swift; sourceTree = "<group>"; };
 		611CB31F22164E480009C1A0 /* music.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = music.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -181,7 +181,7 @@
 				611CB2BF22110DCF0009C1A0 /* ViewController.swift */,
 				611CB316221515410009C1A0 /* NormalPlayController.swift */,
 				611CB318221553E20009C1A0 /* VerticalFullScreenPlayController.swift */,
-				611CB31D22155BC10009C1A0 /* LyricsPlayerController.swift */,
+				611CB31D22155BC10009C1A0 /* LyricsPlayController.swift */,
 				611CB2C122110DCF0009C1A0 /* Main.storyboard */,
 				611CB2C422110DD00009C1A0 /* Assets.xcassets */,
 				611CB2C622110DD00009C1A0 /* LaunchScreen.storyboard */,
@@ -460,7 +460,7 @@
 				611CB2C022110DCF0009C1A0 /* ViewController.swift in Sources */,
 				611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */,
 				611CB2BE22110DCF0009C1A0 /* AppDelegate.swift in Sources */,
-				611CB31E22155BC10009C1A0 /* LyricsPlayerController.swift in Sources */,
+				611CB31E22155BC10009C1A0 /* LyricsPlayController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

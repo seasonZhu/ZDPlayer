@@ -14,7 +14,7 @@ public class LoadingIndicator: UIView {
         get {
             return indicatorLayer.lineWidth
         }
-        set(newValue) {
+        set {
             indicatorLayer.lineWidth = newValue
             updateIndicatorLayerPath()
         }
@@ -70,8 +70,8 @@ public class LoadingIndicator: UIView {
     }
     
     func updateIndicatorLayerPath() {
-        let center = CGPoint(x: self.bounds.midX, y: self.bounds.midY)
-        let radius = min(self.bounds.width / 2, self.bounds.height / 2) - indicatorLayer.lineWidth / 2
+        let center = CGPoint(x: bounds.midX, y: bounds.midY)
+        let radius = min(bounds.width / 2, bounds.height / 2) - indicatorLayer.lineWidth / 2
         let startAngle: CGFloat = 0
         let endAngle: CGFloat = 2 * CGFloat(Double.pi)
         let path = UIBezierPath(arcCenter: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
@@ -82,7 +82,7 @@ public class LoadingIndicator: UIView {
     }
     
     public func startAnimating() {
-        if self.isAnimating {
+        if isAnimating {
             return
         }
         

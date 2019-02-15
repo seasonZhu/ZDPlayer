@@ -8,6 +8,10 @@
 
 import Foundation
 
+/*
+ 一些分类的使用
+ */
+
 extension Timer {
     
     /// Timer将userInfo作为callback的定时方法
