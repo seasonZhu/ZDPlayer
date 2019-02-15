@@ -905,6 +905,7 @@ extension ZDPlayerView {
             if BrightnessView.share.alpha == 1 {
                 BrightnessView.share.alpha = 0
             }
+            soundButton.isSelected = volumeSlider.value == 0
         }else {
             UIScreen.main.brightness -= velocityY / 10000
         }

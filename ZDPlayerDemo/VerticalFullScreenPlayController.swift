@@ -8,6 +8,7 @@
 
 import UIKit
 import ZDPlayer
+import AVFoundation
 
 class VerticalFullScreenPlayController: UIViewController {
     
@@ -23,7 +24,12 @@ class VerticalFullScreenPlayController: UIViewController {
         
         player = ZDPlayer()
         
-        localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "2", ofType: "mp4")!)
+        let buttonItem = UIBarButtonItem.init(title: "切视频", style: .plain, target: self, action: #selector(changeMp4(_:)))
+        navigationItem.rightBarButtonItem = buttonItem
+        
+        
+        
+        localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "ad_douyin", ofType: "mp4")!)
         remoteURL = URL(string: "https://github.com/seasonZhu/ZDLaunchAdKit/blob/master/ZDLaunchAdDemo/Source/video1.mp4?raw=true")!
         let path = PlayerCacheManager.cacheFilePath(for: remoteURL)
         print(path)
@@ -60,6 +66,22 @@ class VerticalFullScreenPlayController: UIViewController {
     
     deinit {
         print("VerticalFullScreenPlayController销毁了")
+    }
+}
+
+extension VerticalFullScreenPlayController {
+    @objc
+    private func changeMp4(_ button: UIButton) {
+        button.tag = button.tag + 1
+        let url: URL
+        if button.tag % 2 == 0 {
+            url = localURL
+        }else {
+            url = remoteURL
+        }
+        player.setVideoTitle(url.lastPathComponent)
+        player.loadVideo(url: url)
+        player.play()
     }
 }
 
