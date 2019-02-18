@@ -67,9 +67,9 @@ extension CacheManager {
     ///
     /// - Parameter url: URL
     /// - Returns: 配置信息
-    public static func cacheConfiguration(forURL url: URL) -> PlayerCacheMediaConfiguration {
+    public static func cacheConfiguration(forURL url: URL) -> CacheMediaInfo {
         let filePath = cacheFilePath(for: url)
-        return PlayerCacheMediaConfiguration.configuration(filePath: filePath)
+        return CacheMediaInfo.getMediaInfo(filePath: filePath)
     }
 }
 

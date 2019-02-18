@@ -1,5 +1,5 @@
 //
-//  PlayerCacheMedia.swift
+//  CacheMedia.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/11.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class PlayerCacheMedia: NSObject, NSCoding {
+public class CacheMedia: NSObject, NSCoding {
     
     public var contentType: String?
     public var isByteRangeAccessSupported: Bool = false
@@ -27,6 +27,7 @@ public class PlayerCacheMedia: NSObject, NSCoding {
     }
     
     public required init?(coder aDecoder: NSCoder) {
+        super.init()
         contentType = aDecoder.decodeObject(forKey: "contentType") as? String
         isByteRangeAccessSupported = aDecoder.decodeBool(forKey: "isByteRangeAccessSupported")
         contentLength = aDecoder.decodeInt64(forKey: "contentLength")
@@ -38,7 +39,7 @@ public class PlayerCacheMedia: NSObject, NSCoding {
     }
 }
 
-extension PlayerCacheMedia {
+extension CacheMedia {
     public override var description: String {
         return "contentType: \(String(describing: contentType))\n isByteRangeAccessSupported: \(isByteRangeAccessSupported)\n contentLength: \(contentLength)\n downloadedLength: \(downloadedLength)\n"
     }

@@ -1,5 +1,5 @@
 //
-//  PlayerCacheMediaWorker.swift
+//  CacheMediaWorker.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/11.
@@ -8,8 +8,8 @@
 
 import Foundation
 
-public class PlayerCacheMediaWorker {
-    public fileprivate(set) var cacheMediaConfiguration: PlayerCacheMediaConfiguration?
+public class CacheMediaWorker {
+    public fileprivate(set) var mediaInfo: CacheMediaInfo?
     public fileprivate(set) var initError: Error?
     
     private var readFileHandle: FileHandle?
@@ -42,13 +42,28 @@ public class PlayerCacheMediaWorker {
             if !FileManager.default.fileExists(atPath: path) {
                 FileManager.default.createFile(atPath: path, contents: nil, attributes: nil)
             }
-            let fileUrl = URL(fileURLWithPath: path)
+            
             do {
+                let fileUrl = URL(fileURLWithPath: path)
                 try readFileHandle = FileHandle(forReadingFrom: fileUrl)
                 
+            }catch let error {
+                err = error
+            }
+            
+        }
+        
+        if err == nil {
+            if !FileManager.default.fileExists(atPath: path) {
+                FileManager.default.createFile(atPath: path, contents: nil, attributes: nil)
+            }
+            
+            do {
+                let fileUrl = URL(fileURLWithPath: path)
                 try writeFileHandle = FileHandle(forWritingTo: fileUrl)
-                cacheMediaConfiguration = PlayerCacheMediaConfiguration.configuration(filePath: path)
-                cacheMediaConfiguration?.url = url
+                mediaInfo = CacheMediaInfo.getMediaInfo(filePath: path)
+                mediaInfo?.url = url
+                
             }catch let error {
                 err = error
             }
@@ -66,12 +81,12 @@ public class PlayerCacheMediaWorker {
     }
 }
 
-extension PlayerCacheMediaWorker {
+extension CacheMediaWorker {
     public func writeCache(data: Data, forRange range: NSRange, callback: (Bool) -> Void) {
         writeFileQueue.sync {
             if let _ = writeFileHandle?.seek(toFileOffset: UInt64(range.location)), let _ = writeFileHandle?.write(data) {
                 writeBytes += Double(data.count)
-                cacheMediaConfiguration?.addCache(segment: range)
+                mediaInfo?.addCache(segment: range)
                 callback(true)
             }else {
                 callback(false)
@@ -93,7 +108,7 @@ extension PlayerCacheMediaWorker {
         
         let endOffset = range.location + range.length
         
-        if let cacheSegments = cacheMediaConfiguration?.cacheSegments {
+        if let cacheSegments = mediaInfo?.cacheSegments {
             for value in cacheSegments {
                 let segmentRange = value.rangeValue
                 let intersctionRange = NSIntersectionRange(range, segmentRange)
@@ -157,8 +172,8 @@ extension PlayerCacheMediaWorker {
         return actions
     }
     
-    public func set(cacheMedia: PlayerCacheMedia) -> Bool {
-        cacheMediaConfiguration?.cacheMedia = cacheMedia
+    public func set(cacheMedia: CacheMedia) -> Bool {
+        mediaInfo?.cacheMedia = cacheMedia
         if let _ = writeFileHandle?.truncateFile(atOffset: UInt64(cacheMedia.contentLength)), let _ = writeFileHandle?.synchronizeFile() {
             return true
         }else {
@@ -169,7 +184,7 @@ extension PlayerCacheMediaWorker {
     public func save() {
         writeFileQueue.sync {
             writeFileHandle?.synchronizeFile()
-            cacheMediaConfiguration?.save()
+            mediaInfo?.save()
         }
     }
     
@@ -188,7 +203,7 @@ extension PlayerCacheMediaWorker {
             NotificationCenter.default.removeObserver(self)
             if let startWriteDate = startWriteDate {
                 let time = Date().timeIntervalSince(startWriteDate)
-                cacheMediaConfiguration?.add(downloadedBytes: UInt64(writeBytes), time: time)
+                mediaInfo?.add(downloadedBytes: UInt64(writeBytes), time: time)
             }
         }
     }

@@ -31,7 +31,7 @@ public class Downloader {
     public private(set) var url: URL
     
     /// 多媒体工作器
-    public private(set) var cacheMediaWorker: PlayerCacheMediaWorker
+    public private(set) var cacheMediaWorker: CacheMediaWorker
     
     /// 请求的URLSession
     public private(set) var session: URLSession?
@@ -60,7 +60,7 @@ public class Downloader {
     ///   - actions: 缓存行为
     ///   - url: 资源网址
     ///   - cacheMediaWorker: 多媒体工作器
-    public init(actions: [CacheAction], url: URL, cacheMediaWorker: PlayerCacheMediaWorker) {
+    public init(actions: [CacheAction], url: URL, cacheMediaWorker: CacheMediaWorker) {
         self.actions = actions
         self.cacheMediaWorker = cacheMediaWorker
         self.url = url
@@ -135,7 +135,7 @@ extension Downloader {
         let currentTime = CFAbsoluteTimeGetCurrent()
         let interval = CacheManager.mediaCacheNotifyInterval
         if notifyTime < currentTime - interval || isFlush {
-            if let configuration = cacheMediaWorker.cacheMediaConfiguration?.copy() as? PlayerCacheMediaConfiguration {
+            if let configuration = cacheMediaWorker.mediaInfo?.copy() as? CacheMediaInfo {
                 let userInfo = [CacheManager.CacheConfigurationKey: configuration]
                 NotificationCenter.default.post(name: .CacheManagerDidUpdateCache, object: self, userInfo: userInfo)
                 
@@ -150,7 +150,7 @@ extension Downloader {
     ///
     /// - Parameter error: Error
     func notify(downloadFinishWithError error: Error?) {
-        if let configuration = cacheMediaWorker.cacheMediaConfiguration?.copy() {
+        if let configuration = cacheMediaWorker.mediaInfo?.copy() {
             var userInfo = [CacheManager.CacheConfigurationKey: configuration]
             if let error = error {
                 userInfo.updateValue(error, forKey: CacheManager.CacheErrorKey)

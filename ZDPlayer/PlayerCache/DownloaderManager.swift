@@ -59,8 +59,8 @@ extension DownloaderManagerDelegate {
 public class DownloaderManager {
     public private(set) var url: URL
     public weak var delegate: DownloaderManagerDelegate?
-    public var cacheMedia: PlayerCacheMedia?
-    public let cacheMediaWorker: PlayerCacheMediaWorker
+    public var cacheMedia: CacheMedia?
+    public let cacheMediaWorker: CacheMediaWorker
     
     private let session: URLSession
     private var isDownloadToEnd = false
@@ -71,8 +71,8 @@ public class DownloaderManager {
     
     init(url: URL) {
         self.url = url
-        cacheMediaWorker = PlayerCacheMediaWorker(url: url)
-        cacheMedia = cacheMediaWorker.cacheMediaConfiguration?.cacheMedia
+        cacheMediaWorker = CacheMediaWorker(url: url)
+        cacheMedia = cacheMediaWorker.mediaInfo?.cacheMedia
         
         let configuration = URLSessionConfiguration.default
         session = URLSession(configuration: configuration)
@@ -88,7 +88,7 @@ public class DownloaderManager {
         
         var range = NSRange(location: Int(fromOffset), length: length)
         if isEnd {
-            if let contentLength = cacheMediaWorker.cacheMediaConfiguration?.cacheMedia?.contentLength {
+            if let contentLength = cacheMediaWorker.mediaInfo?.cacheMedia?.contentLength {
                 range.length = Int(contentLength) - range.location
             }else {
                 range.length = 0 - range.location
@@ -141,7 +141,7 @@ extension DownloaderManager {
 extension DownloaderManager: DownloaderDelegate {
     public func downloader(_ downloader: Downloader, didReceive response: URLResponse) {
         if cacheMedia == nil {
-            let cacheMedia = PlayerCacheMedia()
+            let cacheMedia = CacheMedia()
             if let httpURLResponse = response as? HTTPURLResponse {
                 let acceptRange = httpURLResponse.allHeaderFields["Accept-Ranges"] as? String
                 if acceptRange == "bytes" {
@@ -171,7 +171,7 @@ extension DownloaderManager: DownloaderDelegate {
             self.cacheMedia = cacheMedia
             let isSet = cacheMediaWorker.set(cacheMedia: cacheMedia)
             if !isSet {
-                let error = NSError(domain: "com.lostsakura.www.PlayerCacheMedia", code: -1, userInfo: [NSLocalizedDescriptionKey:"Set cache media failed."])
+                let error = NSError(domain: "com.lostsakura.www.CacheMedia", code: -1, userInfo: [NSLocalizedDescriptionKey:"Set cache media failed."])
                 delegate?.downloaderManager(self, didFinishedWithError: error as Error)
                 return
             }
@@ -187,7 +187,7 @@ extension DownloaderManager: DownloaderDelegate {
         DownloaderManagerStatus.share.remove(url: url)
         if error == nil && isDownloadToEnd {
             isDownloadToEnd = false
-            if let contentLength = cacheMediaWorker.cacheMediaConfiguration?.cacheMedia?.contentLength {
+            if let contentLength = cacheMediaWorker.mediaInfo?.cacheMedia?.contentLength {
                 let length = contentLength - 2
                 downloaderTask(fromOffset: 2, length: Int(length), isEnd: true)
             }
