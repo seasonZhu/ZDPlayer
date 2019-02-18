@@ -1,5 +1,5 @@
 //
-//  PlayerDownloader.swift
+//  DownloaderManager.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/11.
@@ -9,12 +9,12 @@
 import Foundation
 import MobileCoreServices
 
-public struct PlayerDownloaderStatus {
+public struct DownloaderManagerStatus {
     
     private var downloadingURLs: Set<URL>
     //fileprivate let downloaderStatusQueue: DispatchQueue
     
-    public static var share = PlayerDownloaderStatus()
+    public static var share = DownloaderManagerStatus()
     private init() {
         //downloaderStatusQueue = DispatchQueue(label: "com.vgplayer.downloaderStatusQueue")
         downloadingURLs = Set<URL>()
@@ -24,7 +24,7 @@ public struct PlayerDownloaderStatus {
      这个地方的添加与删除 我并没同步线程,不知道会不会有问题
      应该说我使用同步线程 系统提示我这么做没有意义
      */
-    public mutating func add(url: URL) {
+    public mutating func insert(url: URL) {
         downloadingURLs.insert(url)
     }
     
@@ -41,28 +41,33 @@ public struct PlayerDownloaderStatus {
     }
 }
 
-public protocol PlayerDownloaderDelegate: class {
-    func downloader(_ downloader: PlayerDownloader, didReceiveResponse response: URLResponse)
-    func downloader(_ downloader: PlayerDownloader, didReceiveData data: Data, isLocal: Bool)
-    func downloader(_ downloader: PlayerDownloader, didFinishedWithError error: Error?)
+/// 下载管理器代理
+public protocol DownloaderManagerDelegate: class {
+    func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveResponse response: URLResponse)
+    func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveData data: Data, isLocal: Bool)
+    func downloaderManager(_ downloaderManager: DownloaderManager, didFinishedWithError error: Error?)
 }
 
 
-extension PlayerDownloaderDelegate {
-    func downloader(_ downloader: PlayerDownloader, didReceiveResponse response: URLResponse) { }
-    func downloader(_ downloader: PlayerDownloader, didReceiveData data: Data, isLocal: Bool) { }
-    func downloader(_ downloader: PlayerDownloader, didFinishedWithError error: Error?) { }
+extension DownloaderManagerDelegate {
+    func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveResponse response: URLResponse) { }
+    func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveData data: Data, isLocal: Bool) { }
+    func downloaderManager(_ downloaderManager: DownloaderManager, didFinishedWithError error: Error?) { }
 }
 
-public class PlayerDownloader {
+/// 下载管理器
+public class DownloaderManager {
     public private(set) var url: URL
-    public weak var delegate: PlayerDownloaderDelegate?
+    public weak var delegate: DownloaderManagerDelegate?
     public var cacheMedia: PlayerCacheMedia?
     public let cacheMediaWorker: PlayerCacheMediaWorker
     
     private let session: URLSession
     private var isDownloadToEnd = false
-    private var downloaderWorker: PlayerDownloaderWorker?
+    private var downloader: Downloader?
+    private var isCurrentURLDownloading: Bool {
+        return DownloaderManagerStatus.share.contains(url: url)
+    }
     
     init(url: URL) {
         self.url = url
@@ -74,12 +79,12 @@ public class PlayerDownloader {
     }
     
     public func downloaderTask(fromOffset: Int64, length: Int, isEnd: Bool) {
-        if isCurrentURLDownloading() {
+        if isCurrentURLDownloading {
             handleCurrentURLDownloadingError()
             return
         }
         
-        PlayerDownloaderStatus.share.add(url: url)
+        DownloaderManagerStatus.share.insert(url: url)
         
         var range = NSRange(location: Int(fromOffset), length: length)
         if isEnd {
@@ -91,25 +96,25 @@ public class PlayerDownloader {
         }
         
         let actions = cacheMediaWorker.cachedDataActions(forRange: range)
-        downloaderWorker = PlayerDownloaderWorker(actions: actions, url: url, cacheMediaWorker: cacheMediaWorker)
-        downloaderWorker?.delegate = self
-        downloaderWorker?.start()
+        downloader = Downloader(actions: actions, url: url, cacheMediaWorker: cacheMediaWorker)
+        downloader?.delegate = self
+        downloader?.start()
     }
     
     public func downloadFrameStartToEnd() {
-        if isCurrentURLDownloading() {
+        if isCurrentURLDownloading {
             handleCurrentURLDownloadingError()
             return
         }
         
-        PlayerDownloaderStatus.share.add(url: url)
+        DownloaderManagerStatus.share.insert(url: url)
         
         isDownloadToEnd = true
         let range = NSRange(location: 0, length: 2)
         let actions = cacheMediaWorker.cachedDataActions(forRange: range)
-        downloaderWorker = PlayerDownloaderWorker(actions: actions, url: url, cacheMediaWorker: cacheMediaWorker)
-        downloaderWorker?.delegate = self
-        downloaderWorker?.start()
+        downloader = Downloader(actions: actions, url: url, cacheMediaWorker: cacheMediaWorker)
+        downloader?.delegate = self
+        downloader?.start()
     }
     
     public func cancel() {
@@ -117,29 +122,24 @@ public class PlayerDownloader {
     }
     
     public func invalidateAndCancel() {
-        PlayerDownloaderStatus.share.remove(url: url)
-        downloaderWorker?.cancel()
-        downloaderWorker?.delegate = nil
-        downloaderWorker = nil
+        DownloaderManagerStatus.share.remove(url: url)
+        downloader?.cancel()
+        downloader?.delegate = nil
+        downloader = nil
     }
 }
 
-extension PlayerDownloader {
-    func isCurrentURLDownloading() -> Bool {
-        return PlayerDownloaderStatus.share.contains(url: url)
-    }
+extension DownloaderManager {
     
     func handleCurrentURLDownloadingError() {
-        if isCurrentURLDownloading() {
-            let userInfo = [NSLocalizedDescriptionKey: "URL: \(url) alreay in downloading queue."]
-            let error = NSError(domain: "com.lostsakura.www.PlayerDownloader", code: -1, userInfo: userInfo)
-            delegate?.downloader(self, didFinishedWithError: error as Error)
-        }
+        let userInfo = [NSLocalizedDescriptionKey: "URL: \(url) alreay in downloading queue."]
+        let error = NSError(domain: "com.lostsakura.www.DownloaderManager", code: -1, userInfo: userInfo)
+        delegate?.downloaderManager(self, didFinishedWithError: error as Error)
     }
 }
 
-extension PlayerDownloader: PlayerDownloaderWorkerDelegate {
-    public func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didReceive response: URLResponse) {
+extension DownloaderManager: DownloaderDelegate {
+    public func downloader(_ downloader: Downloader, didReceive response: URLResponse) {
         if cacheMedia == nil {
             let cacheMedia = PlayerCacheMedia()
             if let httpURLResponse = response as? HTTPURLResponse {
@@ -172,19 +172,19 @@ extension PlayerDownloader: PlayerDownloaderWorkerDelegate {
             let isSet = cacheMediaWorker.set(cacheMedia: cacheMedia)
             if !isSet {
                 let error = NSError(domain: "com.lostsakura.www.PlayerCacheMedia", code: -1, userInfo: [NSLocalizedDescriptionKey:"Set cache media failed."])
-                delegate?.downloader(self, didFinishedWithError: error as Error)
+                delegate?.downloaderManager(self, didFinishedWithError: error as Error)
                 return
             }
         }
-        delegate?.downloader(self, didReceiveResponse: response)
+        delegate?.downloaderManager(self, didReceiveResponse: response)
     }
     
-    public func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didReceive data: Data, isLocal: Bool) {
-        delegate?.downloader(self, didReceiveData: data, isLocal: isLocal)
+    public func downloader(_ downloader: Downloader, didReceive data: Data, isLocal: Bool) {
+        delegate?.downloaderManager(self, didReceiveData: data, isLocal: isLocal)
     }
     
-    public func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didFinishWithError error: Error?) {
-        PlayerDownloaderStatus.share.remove(url: url)
+    public func downloader(_ downloader: Downloader, didFinishWithError error: Error?) {
+        DownloaderManagerStatus.share.remove(url: url)
         if error == nil && isDownloadToEnd {
             isDownloadToEnd = false
             if let contentLength = cacheMediaWorker.cacheMediaConfiguration?.cacheMedia?.contentLength {
@@ -192,7 +192,7 @@ extension PlayerDownloader: PlayerDownloaderWorkerDelegate {
                 downloaderTask(fromOffset: 2, length: Int(length), isEnd: true)
             }
         }else {
-            delegate?.downloader(self, didFinishedWithError: error)
+            delegate?.downloaderManager(self, didFinishedWithError: error)
         }
     }
 }

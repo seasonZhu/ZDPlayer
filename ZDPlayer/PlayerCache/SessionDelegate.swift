@@ -1,5 +1,5 @@
 //
-//  PlayerDownloaderManager.swift
+//  SessionDelegate.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/11.
@@ -8,21 +8,23 @@
 
 import Foundation
 
-public protocol PlayerDownloaderManagerDelegate: class {
+/// 下载管理器代理
+public protocol DownloaderSessionDelegate: class {
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void)
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data)
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?)
 }
 
-public class PlayerDownloaderManager: NSObject {
+/// 下载管理器
+public class SessionDelegate: NSObject {
     private let kBufferSize = 10 * 1024
     private var bufferData: NSMutableData!
     private let bufferDataQueue: DispatchQueue
     
-    public weak var delegate: PlayerDownloaderManagerDelegate?
+    public weak var delegate: DownloaderSessionDelegate?
     
-    public init(delegate: PlayerDownloaderManagerDelegate?) {
+    public init(delegate: DownloaderSessionDelegate?) {
         self.delegate = delegate
         bufferData = NSMutableData()
         bufferDataQueue = DispatchQueue(label: "com.lostsakura.www.bufferDataQueue")
@@ -30,7 +32,7 @@ public class PlayerDownloaderManager: NSObject {
     }
 }
 
-extension PlayerDownloaderManager: URLSessionDataDelegate {
+extension SessionDelegate: URLSessionDataDelegate {
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         delegate?.urlSession(session, dataTask: dataTask, didReceive: response, completionHandler: completionHandler)
     }

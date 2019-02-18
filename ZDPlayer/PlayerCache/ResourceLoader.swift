@@ -24,7 +24,7 @@ public class ResourceLoader {
     public weak var delegate: ResourceLoaderDelegate?
     
     /// 下载器
-    private let downloader: PlayerDownloader
+    private let downloader: DownloaderManager
     
     /// 资源请求队列
     private var pendingRequestWorkers = [String: ResourceLoadingRequest]()
@@ -37,7 +37,7 @@ public class ResourceLoader {
     /// - Parameter url: 资源网址
     init(url: URL) {
         self.url = url
-        downloader = PlayerDownloader(url: url)
+        downloader = DownloaderManager(url: url)
     }
     
     /// 添加资源请求

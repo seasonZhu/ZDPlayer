@@ -24,7 +24,7 @@ public class ResourceLoadingRequest {
     public weak var delegate: ResourceLoadingRequestDelegate?
     
     /// 下载器
-    private let downloader: PlayerDownloader
+    private let downloader: DownloaderManager
     
     /// 取消错误
     private var cancelledError: Error {
@@ -37,7 +37,7 @@ public class ResourceLoadingRequest {
     /// - Parameters:
     ///   - downloader: 下载器
     ///   - request: 资源请求
-    init(downloader: PlayerDownloader, request: AVAssetResourceLoadingRequest) {
+    init(downloader: DownloaderManager, request: AVAssetResourceLoadingRequest) {
         self.request = request
         self.downloader = downloader
         downloader.delegate = self
@@ -89,16 +89,16 @@ extension ResourceLoadingRequest {
     }
 }
 
-extension ResourceLoadingRequest: PlayerDownloaderDelegate {
-    public func downloader(_ downloader: PlayerDownloader, didReceiveResponse response: URLResponse) {
+extension ResourceLoadingRequest: DownloaderManagerDelegate {
+    public func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveResponse response: URLResponse) {
         setCacheMediaToAVAssetResourceLoadingRequest()
     }
     
-    public func downloader(_ downloader: PlayerDownloader, didReceiveData data: Data, isLocal: Bool) {
+    public func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveData data: Data, isLocal: Bool) {
         request.dataRequest?.respond(with: data)
     }
     
-    public func downloader(_ downloader: PlayerDownloader, didFinishedWithError error: Error?) {
+    public func downloaderManager(_ downloaderManager: DownloaderManager, didFinishedWithError error: Error?) {
         if error?._code == NSURLErrorCancelled {
             return
         }

@@ -1,5 +1,5 @@
 //
-//  PlayerDownloaderWorker.swift
+//  Downloader.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/11.
@@ -8,47 +8,74 @@
 
 import Foundation
 
-public protocol PlayerDownloaderWorkerDelegate: class {
-    func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didReceive response: URLResponse)
-    func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didReceive data: Data, isLocal: Bool)
-    func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didFinishWithError error: Error?)
+/// 下载工作器代理
+public protocol DownloaderDelegate: class {
+    func downloader(_ downloader: Downloader, didReceive response: URLResponse)
+    func downloader(_ downloader: Downloader, didReceive data: Data, isLocal: Bool)
+    func downloader(_ downloader: Downloader, didFinishWithError error: Error?)
 }
 
-extension PlayerDownloaderWorkerDelegate {
-    func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didReceive response: URLResponse) {}
-    func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didReceive data: Data, isLocal: Bool) {}
-    func downloaderWorker(_ downloaderWorker: PlayerDownloaderWorker, didFinishWithError error: Error?) {}
+extension DownloaderDelegate {
+    func downloader(_ downloader: Downloader, didReceive response: URLResponse) {}
+    func downloader(_ downloader: Downloader, didReceive data: Data, isLocal: Bool) {}
+    func downloader(_ downloader: Downloader, didFinishWithError error: Error?) {}
 }
 
-public class PlayerDownloaderWorker {
+/// 下载工作器
+public class Downloader {
+    
+    /// 缓存行为
     public private(set) var actions: [CacheAction]
+    
+    /// 资源网址
     public private(set) var url: URL
+    
+    /// 多媒体工作器
     public private(set) var cacheMediaWorker: PlayerCacheMediaWorker
     
+    /// 请求的URLSession
     public private(set) var session: URLSession?
+    
+    /// 请求任务
     public private(set) var task: URLSessionDataTask?
-    public private(set) var downloadURLSessionManager: PlayerDownloaderManager?
+    
+    /// 下载器
+    public private(set) var sessionDelegate: SessionDelegate?
+    
+    /// 开始时的偏移
     public private(set) var startOffset: Int = 0
     
-    public weak var delegate: PlayerDownloaderWorkerDelegate?
+    /// 下载工作器的代理
+    public weak var delegate: DownloaderDelegate?
     
+    /// 是否取消
     private var isCanceled: Bool = false
+    
+    /// 通知时间
     private var notifyTime = 0.0
     
+    /// 初始化方法
+    ///
+    /// - Parameters:
+    ///   - actions: 缓存行为
+    ///   - url: 资源网址
+    ///   - cacheMediaWorker: 多媒体工作器
     public init(actions: [CacheAction], url: URL, cacheMediaWorker: PlayerCacheMediaWorker) {
         self.actions = actions
         self.cacheMediaWorker = cacheMediaWorker
         self.url = url
-        downloadURLSessionManager = PlayerDownloaderManager(delegate: self)
+        sessionDelegate = SessionDelegate(delegate: self)
         let sessionConfiguration = URLSessionConfiguration.default
-        let session = URLSession(configuration: sessionConfiguration, delegate: downloadURLSessionManager, delegateQueue: PlayerCacheSession.share.downloadQueue)
+        let session = URLSession(configuration: sessionConfiguration, delegate: sessionDelegate, delegateQueue: nil)
         self.session = session
     }
     
+    /// 开始
     public func start() {
         processAction()
     }
     
+    /// 取消
     public func cancel() {
         if let _ = session {
             session?.invalidateAndCancel()
@@ -56,28 +83,30 @@ public class PlayerDownloaderWorker {
         isCanceled = true
     }
     
+    /// 析构函数
     deinit {
         cancel()
     }
 }
 
-extension PlayerDownloaderWorker {
+extension Downloader {
+    
+    /// 进程操作
     func processAction() {
         if isCanceled {
             return
         }
-        
         
         if let action = actions.first {
             actions.remove(at: 0)
             switch action.type {
             case .local:
                 if let data = cacheMediaWorker.readCache(forRange: action.range) {
-                    delegate?.downloaderWorker(self, didReceive: data, isLocal: true)
+                    delegate?.downloader(self, didReceive: data, isLocal: true)
                     processAction()
                 }else {
-                    let error = NSError(domain: "com.lostsakura.www.PlayerDownloaderWorker", code: -1, userInfo: [NSLocalizedDescriptionKey: "Read cache data failed."])
-                    delegate?.downloaderWorker(self, didFinishWithError: error as Error)
+                    let error = NSError(domain: "com.lostsakura.www.Downloader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Read cache data failed."])
+                    delegate?.downloader(self, didFinishWithError: error as Error)
                 }
             case .remote:
                 let fromOffset = action.range.location
@@ -93,10 +122,15 @@ extension PlayerDownloaderWorker {
                 task?.resume()
             }
         }else {
-            delegate?.downloaderWorker(self, didFinishWithError: nil)
+            delegate?.downloader(self, didFinishWithError: nil)
         }
     }
     
+    /// 通知下载进度
+    ///
+    /// - Parameters:
+    ///   - isFlush: 是否冲刺?
+    ///   - isFinished: 是否完成
     func notify(downloadProgressWithFlush isFlush: Bool, isFinished: Bool) {
         let currentTime = CFAbsoluteTimeGetCurrent()
         let interval = CacheManager.mediaCacheNotifyInterval
@@ -112,6 +146,9 @@ extension PlayerDownloaderWorker {
         }
     }
     
+    /// 通知下载完成 有错误
+    ///
+    /// - Parameter error: Error
     func notify(downloadFinishWithError error: Error?) {
         if let configuration = cacheMediaWorker.cacheMediaConfiguration?.copy() {
             var userInfo = [CacheManager.CacheConfigurationKey: configuration]
@@ -123,13 +160,15 @@ extension PlayerDownloaderWorker {
     }
 }
 
-extension PlayerDownloaderWorker: PlayerDownloaderManagerDelegate {
+extension Downloader: DownloaderSessionDelegate {
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         if let mimeType = response.mimeType {
-            if mimeType.range(of: "video/") == nil && mimeType.range(of: "audio/") == nil && mimeType.range(of: "application") == nil {
+            if mimeType.range(of: "video/") == nil
+                && mimeType.range(of: "audio/") == nil
+                && mimeType.range(of: "application") == nil {
                 completionHandler(.cancel)
             }else {
-                delegate?.downloaderWorker(self, didReceive: response)
+                delegate?.downloader(self, didReceive: response)
                 cacheMediaWorker.startWritting()
                 completionHandler(.allow)
             }
@@ -143,16 +182,16 @@ extension PlayerDownloaderWorker: PlayerDownloaderManagerDelegate {
         }
         
         let range = NSRange(location: startOffset, length: data.count)
-        cacheMediaWorker.writeCache(data: data, forRange: range) { (isCache) in
+        cacheMediaWorker.writeCache(data: data, forRange: range) { [weak self] (isCache) in
             if !isCache {
-                let error = NSError(domain: "com.lostsakura.www.PlayerDownloaderWorker", code: -2, userInfo: [NSLocalizedDescriptionKey: "Write cache data failed."])
-                delegate?.downloaderWorker(self, didFinishWithError: error as Error)
+                let error = NSError(domain: "com.lostsakura.www.Downloader", code: -2, userInfo: [NSLocalizedDescriptionKey: "Write cache data failed."])
+                delegate?.downloader(self!, didFinishWithError: error as Error)
             }
         }
         
         cacheMediaWorker.save()
         startOffset += data.count
-        delegate?.downloaderWorker(self, didReceive: data, isLocal: false)
+        delegate?.downloader(self, didReceive: data, isLocal: false)
         notify(downloadProgressWithFlush: false, isFinished: false)
     }
     
@@ -160,7 +199,7 @@ extension PlayerDownloaderWorker: PlayerDownloaderManagerDelegate {
         cacheMediaWorker.finishWritting()
         cacheMediaWorker.save()
         if let error = error {
-            delegate?.downloaderWorker(self, didFinishWithError: error)
+            delegate?.downloader(self, didFinishWithError: error)
             notify(downloadFinishWithError: error)
         }else {
             notify(downloadProgressWithFlush: true, isFinished: true)
