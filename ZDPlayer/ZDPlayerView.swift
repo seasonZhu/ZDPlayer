@@ -477,7 +477,6 @@ extension ZDPlayerView {
          这个好像获取不到系统的 需要自己封装呀
          */
         brightnessSlider = BrightnessView.share
-        UIApplication.shared.keyWindow?.addSubview(brightnessSlider!)
     }
 }
 

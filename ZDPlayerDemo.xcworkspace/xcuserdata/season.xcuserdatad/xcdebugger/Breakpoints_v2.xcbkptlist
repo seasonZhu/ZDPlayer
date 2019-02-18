@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ZDPlayer/ZDPlayerView.swift"
-            timestampString = "571917071.779736"
+            timestampString = "572146249.754082"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "813"
-            endingLineNumber = "813"
+            startingLineNumber = "812"
+            endingLineNumber = "812"
             landmarkName = "onPanGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ZDPlayer/ZDPlayerView.swift"
-            timestampString = "571917071.780376"
+            timestampString = "572146249.754159"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "809"
-            endingLineNumber = "809"
+            startingLineNumber = "808"
+            endingLineNumber = "808"
             landmarkName = "onPanGesture(_:)"
             landmarkType = "7">
          </BreakpointContent>

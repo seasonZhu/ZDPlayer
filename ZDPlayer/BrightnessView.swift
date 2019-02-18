@@ -8,10 +8,13 @@
 
 import Foundation
 
+/// 高仿系统亮度进度条 参考macOS的亮度进度条
 public class BrightnessView: UIView {
     
+    /// 单例
     public static let share = BrightnessView()
     
+    /// 私有属性
     private lazy var backImage: UIImageView = {
         let backImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 79, height: 76))
         backImage.image = BundleManager.image(named: "brightness")
@@ -33,20 +36,46 @@ public class BrightnessView: UIView {
         return brightnessLevelView
     }()
     
-    private lazy var tipArray = [UIImageView]()
+    private lazy var tips = [UIImageView]()
     
     private var timer: Timer?
     
+    //MARK:- 私有化构造方法
     private override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
+        setUpUI()
+        UIApplication.shared.keyWindow?.addSubview(self)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupUI() {
+    // MARK: - layoutSubviews
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        //InterfaceOrientation值
+        let currInterfaceOrientation: UIInterfaceOrientation = UIApplication.shared.statusBarOrientation
+        switch currInterfaceOrientation {
+        case .portrait, .portraitUpsideDown:
+            center = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: (UIScreen.main.bounds.height - 10) * 0.5)
+        case .landscapeLeft, .landscapeRight:
+            center = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: UIScreen.main.bounds.height * 0.5)
+        default:
+            break
+        }
+        backImage.center = CGPoint(x: 155 * 0.5, y: 155 * 0.5)
+        superview?.bringSubviewToFront(self)
+    }
+    
+    //MARK:- 析构函数
+    deinit {
+        UIScreen.main.removeObserver(self, forKeyPath: #keyPath(UIScreen.brightness))
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    /// 搭建界面
+    private func setUpUI() {
         frame = CGRect(x: UIScreen.main.bounds.width * 0.5, y: UIScreen.main.bounds.height * 0.5 - 20, width: 155, height: 155)
         backgroundColor = UIColor.white
         layer.cornerRadius = 10
@@ -63,14 +92,15 @@ public class BrightnessView: UIView {
         addSubview(title)
         addSubview(brightnessLevelView)
         
-        createTips()
+        setUpTips()
         addStatusBarNotification()
         addKVOObserver()
         
         alpha = 0.0
     }
     
-    private func createTips() {
+    /// 创建亮度进度条
+    private func setUpTips() {
 
         let tipW: CGFloat = (brightnessLevelView.bounds.size.width - 17) / 16
         let tipH: CGFloat = 5
@@ -82,34 +112,9 @@ public class BrightnessView: UIView {
             image.backgroundColor = UIColor.white
             image.frame = CGRect(x: tipX, y: tipY, width: tipW, height: tipH)
             brightnessLevelView.addSubview(image)
-            tipArray.append(image)
+            tips.append(image)
         }
         updateBrightnessLevel(UIScreen.main.brightness)
-    }
-    
-    func addStatusBarNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.statusBarOrientationNotification(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
-    }
-    
-    @objc
-    func statusBarOrientationNotification(_ notify: Notification?) {
-        setNeedsLayout()
-    }
-    
-    func addKVOObserver() {
-        UIScreen.main.addObserver(self, forKeyPath: #keyPath(UIScreen.brightness), options: .new, context: nil)
-    }
-    
-    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        
-        if keyPath == #keyPath(UIScreen.brightness), let levelValue = change?[.newKey] as? NSNumber  {
-            let level = CGFloat(levelValue.floatValue)
-            removeTimer()
-            appearBrightnessView()
-            updateBrightnessLevel(level)
-        }
-        
-        
     }
     
     // MARK: - Brightness显示 隐藏
@@ -134,9 +139,7 @@ public class BrightnessView: UIView {
     
     // MARK: - 定时器
     func addtimer() {
-        if let _ = timer {
-            return
-        }
+        if let _ = timer { return }
         timer = Timer(timeInterval: 2, target: self, selector: #selector(disAppearBrightnessView), userInfo: nil, repeats: false)
         RunLoop.main.add(timer!, forMode: .default)
     }
@@ -150,35 +153,37 @@ public class BrightnessView: UIView {
     func updateBrightnessLevel(_ brightnessLevel: CGFloat) {
         let stage: CGFloat = 1 / 15.0
         let level = Int(brightnessLevel / stage)
-        for i in 0..<tipArray.count {
-            let img: UIImageView? = tipArray[i]
-            if i <= level {
-                img?.isHidden = false
-            } else {
-                img?.isHidden = true
-            }
+        for (index, image) in tips.enumerated() {
+            image.isHidden = index > level
         }
     }
-    
-    // MARK: - 更新布局
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        //InterfaceOrientation值
-        let currInterfaceOrientation: UIInterfaceOrientation = UIApplication.shared.statusBarOrientation
-        switch currInterfaceOrientation {
-        case .portrait, .portraitUpsideDown:
-            center = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: (UIScreen.main.bounds.height - 10) * 0.5)
-        case .landscapeLeft, .landscapeRight:
-            center = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: UIScreen.main.bounds.height * 0.5)
-        default:
-            break
-        }
-        backImage.center = CGPoint(x: 155 * 0.5, y: 155 * 0.5)
-        superview?.bringSubviewToFront(self)
+}
+
+// MARK: - 添加观察状态栏改变的通知
+extension BrightnessView {
+    func addStatusBarNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.statusBarOrientationNotification(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
     }
     
-    deinit {
-        UIScreen.main.removeObserver(self, forKeyPath: #keyPath(UIScreen.brightness))
-        NotificationCenter.default.removeObserver(self)
+    @objc
+    func statusBarOrientationNotification(_ notification: Notification) {
+        setNeedsLayout()
+    }
+}
+
+// MARK: - 添加KVO关于亮度的观察
+extension BrightnessView {
+    func addKVOObserver() {
+        UIScreen.main.addObserver(self, forKeyPath: #keyPath(UIScreen.brightness), options: [.new, .initial], context: nil)
+    }
+    
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        if keyPath == #keyPath(UIScreen.brightness), let levelValue = change?[.newKey] as? NSNumber  {
+            let level = CGFloat(levelValue.floatValue)
+            removeTimer()
+            appearBrightnessView()
+            updateBrightnessLevel(level)
+        }
     }
 }
