@@ -211,7 +211,7 @@
 				611CB3002212A0FA0009C1A0 /* PlayerError.swift */,
 				611CB3092212A6B70009C1A0 /* Subtitles.swift */,
 				61D43A3A2216A9A90095B667 /* BrightnessView.swift */,
-				611CB2E122110DF80009C1A0 /* PlayerCache */,
+				611CB2E122110DF80009C1A0 /* ResourceManager */,
 				611CB3062212A42D0009C1A0 /* Resources */,
 				611CB2D622110DE20009C1A0 /* ZDPlayer.h */,
 				611CB2D722110DE20009C1A0 /* Info.plist */,
@@ -219,7 +219,7 @@
 			path = ZDPlayer;
 			sourceTree = "<group>";
 		};
-		611CB2E122110DF80009C1A0 /* PlayerCache */ = {
+		611CB2E122110DF80009C1A0 /* ResourceManager */ = {
 			isa = PBXGroup;
 			children = (
 				611CB2E6221114790009C1A0 /* CacheManager.swift */,
@@ -234,7 +234,7 @@
 				611CB2F82212745C0009C1A0 /* ResourceLoader.swift */,
 				611CB2FA221274E70009C1A0 /* ResourceLoadingRequest.swift */,
 			);
-			path = PlayerCache;
+			path = ResourceManager;
 			sourceTree = "<group>";
 		};
 		611CB3062212A42D0009C1A0 /* Resources */ = {
