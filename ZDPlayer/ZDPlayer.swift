@@ -207,7 +207,7 @@ public class ZDPlayer: NSObject {
     private var isSeeking = false
     
     /// 资源管理器
-    private let resourceLoaderManager: PlayerResourceLoaderManager
+    private let resourceLoaderManager: ResourceLoaderManager
     
     /// 初始化方法
     ///
@@ -216,7 +216,7 @@ public class ZDPlayer: NSObject {
     ///   - playerView: 播放层
     public init(url: URL?, playerView: ZDPlayerView?) {
         mediaFormat = MediaFormat.analyzeVideoFormat(url: url)
-        resourceLoaderManager = PlayerResourceLoaderManager()
+        resourceLoaderManager = ResourceLoaderManager()
         contentURL = url
         error = PlayerError()
         if let playerView = playerView {

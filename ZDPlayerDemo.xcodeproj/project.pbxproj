@@ -24,9 +24,9 @@
 		611CB2F1221169040009C1A0 /* PlayerDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F0221169040009C1A0 /* PlayerDownloader.swift */; };
 		611CB2F3221169140009C1A0 /* PlayerDownloaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F2221169140009C1A0 /* PlayerDownloaderManager.swift */; };
 		611CB2F5221169250009C1A0 /* PlayerDownloaderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F4221169250009C1A0 /* PlayerDownloaderWorker.swift */; };
-		611CB2F72212737B0009C1A0 /* PlayerResourceLoaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F62212737B0009C1A0 /* PlayerResourceLoaderManager.swift */; };
-		611CB2F92212745C0009C1A0 /* PlayerResourceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F82212745C0009C1A0 /* PlayerResourceLoader.swift */; };
-		611CB2FB221274E70009C1A0 /* PlayerResourceLoadingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2FA221274E70009C1A0 /* PlayerResourceLoadingRequest.swift */; };
+		611CB2F72212737B0009C1A0 /* ResourceLoaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F62212737B0009C1A0 /* ResourceLoaderManager.swift */; };
+		611CB2F92212745C0009C1A0 /* ResourceLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2F82212745C0009C1A0 /* ResourceLoader.swift */; };
+		611CB2FB221274E70009C1A0 /* ResourceLoadingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2FA221274E70009C1A0 /* ResourceLoadingRequest.swift */; };
 		611CB2FD2212A0320009C1A0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2FC2212A0320009C1A0 /* Extensions.swift */; };
 		611CB2FF2212A0980009C1A0 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2FE2212A0980009C1A0 /* LoadingIndicator.swift */; };
 		611CB3012212A0FA0009C1A0 /* PlayerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB3002212A0FA0009C1A0 /* PlayerError.swift */; };
@@ -103,9 +103,9 @@
 		611CB2F0221169040009C1A0 /* PlayerDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDownloader.swift; sourceTree = "<group>"; };
 		611CB2F2221169140009C1A0 /* PlayerDownloaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDownloaderManager.swift; sourceTree = "<group>"; };
 		611CB2F4221169250009C1A0 /* PlayerDownloaderWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDownloaderWorker.swift; sourceTree = "<group>"; };
-		611CB2F62212737B0009C1A0 /* PlayerResourceLoaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerResourceLoaderManager.swift; sourceTree = "<group>"; };
-		611CB2F82212745C0009C1A0 /* PlayerResourceLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerResourceLoader.swift; sourceTree = "<group>"; };
-		611CB2FA221274E70009C1A0 /* PlayerResourceLoadingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerResourceLoadingRequest.swift; sourceTree = "<group>"; };
+		611CB2F62212737B0009C1A0 /* ResourceLoaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceLoaderManager.swift; sourceTree = "<group>"; };
+		611CB2F82212745C0009C1A0 /* ResourceLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceLoader.swift; sourceTree = "<group>"; };
+		611CB2FA221274E70009C1A0 /* ResourceLoadingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceLoadingRequest.swift; sourceTree = "<group>"; };
 		611CB2FC2212A0320009C1A0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		611CB2FE2212A0980009C1A0 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		611CB3002212A0FA0009C1A0 /* PlayerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerError.swift; sourceTree = "<group>"; };
@@ -233,9 +233,9 @@
 				611CB2F2221169140009C1A0 /* PlayerDownloaderManager.swift */,
 				611CB2F4221169250009C1A0 /* PlayerDownloaderWorker.swift */,
 				611CB2F0221169040009C1A0 /* PlayerDownloader.swift */,
-				611CB2F62212737B0009C1A0 /* PlayerResourceLoaderManager.swift */,
-				611CB2F82212745C0009C1A0 /* PlayerResourceLoader.swift */,
-				611CB2FA221274E70009C1A0 /* PlayerResourceLoadingRequest.swift */,
+				611CB2F62212737B0009C1A0 /* ResourceLoaderManager.swift */,
+				611CB2F82212745C0009C1A0 /* ResourceLoader.swift */,
+				611CB2FA221274E70009C1A0 /* ResourceLoadingRequest.swift */,
 			);
 			path = PlayerCache;
 			sourceTree = "<group>";
@@ -495,15 +495,15 @@
 				611CB2F5221169250009C1A0 /* PlayerDownloaderWorker.swift in Sources */,
 				611CB30A2212A6B70009C1A0 /* Subtitles.swift in Sources */,
 				611CB2E7221114790009C1A0 /* CacheManager.swift in Sources */,
-				611CB2F72212737B0009C1A0 /* PlayerResourceLoaderManager.swift in Sources */,
+				611CB2F72212737B0009C1A0 /* ResourceLoaderManager.swift in Sources */,
 				61D43A3B2216A9A90095B667 /* BrightnessView.swift in Sources */,
 				611CB3032212A15A0009C1A0 /* PlayerSlider.swift in Sources */,
 				611CB2EB221119E80009C1A0 /* PlayerCacheMediaConfiguration.swift in Sources */,
 				611CB2F3221169140009C1A0 /* PlayerDownloaderManager.swift in Sources */,
 				611CB30E2212ABB00009C1A0 /* ZDPlayerView.swift in Sources */,
 				611CB2F1221169040009C1A0 /* PlayerDownloader.swift in Sources */,
-				611CB2F92212745C0009C1A0 /* PlayerResourceLoader.swift in Sources */,
-				611CB2FB221274E70009C1A0 /* PlayerResourceLoadingRequest.swift in Sources */,
+				611CB2F92212745C0009C1A0 /* ResourceLoader.swift in Sources */,
+				611CB2FB221274E70009C1A0 /* ResourceLoadingRequest.swift in Sources */,
 				611CB2E92211168F0009C1A0 /* PlayerCacheMedia.swift in Sources */,
 				611CB2FF2212A0980009C1A0 /* LoadingIndicator.swift in Sources */,
 				611CB2E322110ED90009C1A0 /* CacheAction.swift in Sources */,

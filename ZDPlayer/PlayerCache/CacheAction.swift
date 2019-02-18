@@ -8,11 +8,16 @@
 
 import Foundation
 
+/// 缓存类型
+///
+/// - local: 本地文件缓存
+/// - remote: 服务器文件缓存
 public enum CacheType {
     case local
     case remote
 }
 
+/// 缓存行为
 public struct CacheAction {
     public let type: CacheType
     public let range: NSRange

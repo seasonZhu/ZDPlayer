@@ -1,5 +1,5 @@
 //
-//  PlayerResourceLoadingRequest.swift
+//  ResourceLoadingRequest.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/12.
@@ -9,23 +9,42 @@
 import Foundation
 import AVFoundation
 
-public protocol PlayerResourceLoadingRequestDelegate: class {
-    func resourceLoadingRequest(_ resourceLoadingRequest: PlayerResourceLoadingRequest, didCompleteWithError error: Error?)
+/// 资源加载请求代理
+public protocol ResourceLoadingRequestDelegate: class {
+    func resourceLoadingRequest(_ resourceLoadingRequest: ResourceLoadingRequest, didCompleteWithError error: Error?)
 }
 
-public class PlayerResourceLoadingRequest {
-    public private(set) var request: AVAssetResourceLoadingRequest
-    public weak var delegate: PlayerResourceLoadingRequestDelegate?
+/// 资源加载请求
+public class ResourceLoadingRequest {
     
+    /// 资源请求
+    public private(set) var request: AVAssetResourceLoadingRequest
+    
+    /// 资源请求代理
+    public weak var delegate: ResourceLoadingRequestDelegate?
+    
+    /// 下载器
     private let downloader: PlayerDownloader
     
+    /// 取消错误
+    private var cancelledError: Error {
+        let error = NSError(domain: "com.lostsakura.www.ResourceLoadingRequest", code: -3, userInfo: [NSLocalizedDescriptionKey: "Resource loader cancelled"])
+        return error as Error
+    }
+    
+    /// 初始化方法
+    ///
+    /// - Parameters:
+    ///   - downloader: 下载器
+    ///   - request: 资源请求
     init(downloader: PlayerDownloader, request: AVAssetResourceLoadingRequest) {
         self.request = request
         self.downloader = downloader
         downloader.delegate = self
-        fillCacheMedia()
+        setCacheMediaToAVAssetResourceLoadingRequest()
     }
     
+    /// 开始资源请求
     public func start() {
         guard let dataRequest = request.dataRequest else {
             return
@@ -45,36 +64,34 @@ public class PlayerResourceLoadingRequest {
         downloader.downloaderTask(fromOffset: offset, length: length, isEnd: isEnd)
     }
     
+    /// 结束资源请求
     public func finish() {
         if !request.isFinished {
-            request.finishLoading(with: loaderCancelledError())
+            request.finishLoading(with: cancelledError)
         }
     }
     
+    /// 取消资源情趣
     public func cancel() {
         downloader.cancel()
     }
 }
 
-extension PlayerResourceLoadingRequest {
-    func fillCacheMedia() {
+extension ResourceLoadingRequest {
+    
+    /// set CacheMedia to request
+    func setCacheMediaToAVAssetResourceLoadingRequest() {
         if let cacheMedia = downloader.cacheMedia {
             request.contentInformationRequest?.contentType = cacheMedia.contentType
             request.contentInformationRequest?.contentLength = cacheMedia.contentLength
             request.contentInformationRequest?.isByteRangeAccessSupported = cacheMedia.isByteRangeAccessSupported
         }
     }
-    
-    func loaderCancelledError() -> Error {
-        let error = NSError(domain: "com.lostsakura.www.PlayerResourceLoadingRequest", code: -3, userInfo: [NSLocalizedDescriptionKey: "Resource loader cancelled"])
-        return error as Error
-    }
-
 }
 
-extension PlayerResourceLoadingRequest: PlayerDownloaderDelegate {
+extension ResourceLoadingRequest: PlayerDownloaderDelegate {
     public func downloader(_ downloader: PlayerDownloader, didReceiveResponse response: URLResponse) {
-        fillCacheMedia()
+        setCacheMediaToAVAssetResourceLoadingRequest()
     }
     
     public func downloader(_ downloader: PlayerDownloader, didReceiveData data: Data, isLocal: Bool) {

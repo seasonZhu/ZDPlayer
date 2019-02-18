@@ -8,17 +8,18 @@
 
 import Foundation
 
+/// 视频缓存管理器
 public class CacheManager {
     
     
     /// CacheConfigurationKey
-    static public let CacheConfigurationKey = "PlayerCacheConfigurationKey"
+    static public let CacheConfigurationKey = "CacheConfigurationKey"
     
     /// CacheErrorKey
-    static public let CacheErrorKey = "PlayerCacheErrorKey"
+    static public let CacheErrorKey = "CacheErrorKey"
     
     /// CacheClearKey
-    static public let CacheClearKey = "PlayerCacheClearKey"
+    static public let CacheClearKey = "CacheClearKey"
     
     public static var mediaCacheNotifyInterval = 0.1
     
