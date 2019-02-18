@@ -1,5 +1,5 @@
 //
-//  PlayerCacheManager.swift
+//  CacheManager.swift
 //  ZDPlayer
 //
 //  Created by season on 2019/2/11.
@@ -8,32 +8,53 @@
 
 import Foundation
 
-public class PlayerCacheManager {
+public class CacheManager {
+    
+    
+    /// CacheConfigurationKey
     static public let CacheConfigurationKey = "PlayerCacheConfigurationKey"
+    
+    /// CacheErrorKey
     static public let CacheErrorKey = "PlayerCacheErrorKey"
-    static public let CleanCacheKey = "PlayerCleanCacheKey"
+    
+    /// CacheClearKey
+    static public let CacheClearKey = "PlayerCacheClearKey"
     
     public static var mediaCacheNotifyInterval = 0.1
     
+    /// 沙盒保存期限
+    public var maxCachePeriodInSecond: TimeInterval = 60 * 60 * 24 * 7
+    
+    /// 沙盒保存容量
+    public var maxDiskCacheSize: UInt = 0
+    
+    /// 读取线程
     private let ioQueue: DispatchQueue
+    
+    /// 文件管理器
     private var fileManager: FileManager!
     
-    public static let share = PlayerCacheManager()
+    /// 单例
+    public static let share = CacheManager()
     private init() {
         ioQueue = DispatchQueue(label: "com.lostsakura.www.ioQueue")
         ioQueue.sync {
             fileManager = FileManager()
         }
     }
-    
-    public private(set) var cacheConfig = PlayerCacheConfiguration()
 }
 
-extension PlayerCacheManager {
+extension CacheManager {
+    
+    /// 获取缓存文件夹
     public static var cacheDirectory: String {
         return NSTemporaryDirectory() + "PlayerCache"
     }
     
+    /// 通过URL获取缓存文件夹下中的缓存文件路径
+    ///
+    /// - Parameter url: URL
+    /// - Returns: 缓存文件路径
     public static func cacheFilePath(for url: URL) -> String {
         if let cacheFolder = url.lastPathComponent.components(separatedBy: ".").first {
             return cacheDirectory + "/" + cacheFolder + "/" + url.lastPathComponent
@@ -41,38 +62,51 @@ extension PlayerCacheManager {
         return cacheDirectory + "/" + url.lastPathComponent
     }
     
+    /// 通过URL获取缓存文件夹下中的缓存文件的配置信息
+    ///
+    /// - Parameter url: URL
+    /// - Returns: 配置信息
     public static func cacheConfiguration(forURL url: URL) -> PlayerCacheMediaConfiguration {
         let filePath = cacheFilePath(for: url)
         return PlayerCacheMediaConfiguration.configuration(filePath: filePath)
     }
 }
 
-extension PlayerCacheManager {
+extension CacheManager {
+    
+    /// 清除所有的沙盒缓存
     public func clearAllCache() {
         ioQueue.sync {
             do {
-                try fileManager.removeItem(atPath: PlayerCacheManager.cacheDirectory)
+                try fileManager.removeItem(atPath: CacheManager.cacheDirectory)
             }catch {
                 
             }
         }
     }
     
+    /// 计算沙盒缓存
+    ///
+    /// - Parameter callback: 回调缓存大小
     public func calculateDiskCacheSize(completion callback: @escaping (_ size: UInt) -> Void) {
         ioQueue.async {
-            let (_, diskCacheSize, _) = self.cachedFiles(atPath: PlayerCacheManager.cacheDirectory)
+            let (_, diskCacheSize, _) = self.cachedFiles(atPath: CacheManager.cacheDirectory)
             DispatchQueue.main.async {
                 callback(diskCacheSize)
             }
         }
     }
     
+    
+    /// 清理过期文件
+    ///
+    /// - Parameter callback: 回调(删除的过期文件名称)
     public func clearOldFiles(completion callback: (([String]) -> Void)? = nil) {
         ioQueue.sync {
-            var (_, diskCacheSize, cachedFiles) = self.cachedFiles(atPath: PlayerCacheManager.cacheDirectory)
+            var (_, diskCacheSize, cachedFiles) = self.cachedFiles(atPath: CacheManager.cacheDirectory)
             var deleteUrls = [URL]()
-            if diskCacheSize > cacheConfig.maxDiskCacheSize  {
-                let targetSize = cacheConfig.maxDiskCacheSize / 2
+            if diskCacheSize > maxDiskCacheSize  {
+                let targetSize = maxDiskCacheSize / 2
                 
                 let sortedFiles = cachedFiles.keysSortedByValue {
                     resourceValue1, resourceValue2 -> Bool in
@@ -104,14 +138,20 @@ extension PlayerCacheManager {
             
             DispatchQueue.main.async {
                 let deleteFileName = deleteUrls.map { $0.lastPathComponent }
-                NotificationCenter.default.post(name: .PlayerCacheManagerDidCleanCache, object: self, userInfo: [PlayerCacheManager.CleanCacheKey: deleteFileName])
+                NotificationCenter.default.post(name: .CacheManagerDidCleanCache, object: self, userInfo: [CacheManager.CacheClearKey: deleteFileName])
                 callback?(deleteFileName)
             }
         }
     }
     
+    /// 获取缓存路径下的文件信息
+    ///
+    /// - Parameters:
+    ///   - path: 路径
+    ///   - onlyForCacheSize: 是否仅仅针对缓存大小
+    /// - Returns: 文件信息
     private func cachedFiles(atPath path: String, onlyForCacheSize: Bool = true) -> (urlsToDelete: [URL], diskCacheSize: UInt, cachedFiles: [URL: URLResourceValues]) {
-        let expiredDate = (cacheConfig.maxCachePeriodInSecond < 0) ? Date(timeIntervalSinceNow: -24 * 60 * 60 ) : Date(timeIntervalSinceNow: -cacheConfig.maxCachePeriodInSecond)
+        let expiredDate = (maxCachePeriodInSecond < 0) ? Date(timeIntervalSinceNow: -24 * 60 * 60 ) : Date(timeIntervalSinceNow: -maxCachePeriodInSecond)
         
         var urlsToDelete = [URL]()
         var diskCacheSize: UInt = 0
@@ -158,8 +198,9 @@ extension Dictionary {
     }
 }
 
+// MARK: - 缓存管理器的通知名称
 extension Notification.Name {
-    public static var PlayerCacheManagerDidUpdateCache = Notification.Name("com.lostsakura.www.PlayerCacheManagerDidUpdateCache")
-    public static var PlayerCacheManagerDidFinishCache = Notification.Name("com.lostsakura.www.PlayerCacheManagerDidFinishCache")
-    public static var PlayerCacheManagerDidCleanCache = Notification.Name("com.lostsakura.www.PlayerCacheManagerDidCleanCache")
+    public static var CacheManagerDidUpdateCache = Notification.Name("com.lostsakura.www.CacheManagerDidUpdateCache")
+    public static var CacheManagerDidFinishCache = Notification.Name("com.lostsakura.www.CacheManagerDidFinishCache")
+    public static var CacheManagerDidCleanCache = Notification.Name("com.lostsakura.www.CacheManagerDidCleanCache")
 }

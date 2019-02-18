@@ -8,14 +8,16 @@
 
 import Foundation
 
-public class PlayerCacheMedia: NSCoding {
+public class PlayerCacheMedia: NSObject, NSCoding {
     
     public var contentType: String?
     public var isByteRangeAccessSupported: Bool = false
     public var contentLength: Int64 = 0
     public var downloadedLength: UInt64 = 0
     
-    public init() {}
+    public override init() {
+        super.init()
+    }
     
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(contentType, forKey: "contentType")
@@ -36,8 +38,8 @@ public class PlayerCacheMedia: NSCoding {
     }
 }
 
-extension PlayerCacheMedia: CustomStringConvertible {
-    public var description: String {
+extension PlayerCacheMedia {
+    public override var description: String {
         return "contentType: \(String(describing: contentType))\n isByteRangeAccessSupported: \(isByteRangeAccessSupported)\n contentLength: \(contentLength)\n downloadedLength: \(downloadedLength)\n"
     }
 }

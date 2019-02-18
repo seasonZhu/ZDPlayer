@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class PlayerCacheMediaConfiguration: NSCoding {
+public class PlayerCacheMediaConfiguration: NSObject, NSCoding {
     
     public private(set) var filePath: String?
     public private(set) var cacheSegments = [NSValue]()
@@ -62,27 +62,28 @@ public class PlayerCacheMediaConfiguration: NSCoding {
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(fileName, forKey: "fileName")
         aCoder.encode(cacheSegments, forKey: "cacheSegments")
-        aCoder.encode(downloadInfo, forKey: "downloadInfo")
+        //aCoder.encode(downloadInfo, forKey: "downloadInfo")
         aCoder.encode(cacheMedia, forKey: "cacheMedia")
         aCoder.encode(url, forKey: "url")
     }
     
-    public init() {
+    public override init() {
         cacheSegmentQueue = DispatchQueue(label: "com.lostsakura.www.CacheSegmentQueue")
         cacheDownloadInfoQueue = DispatchQueue(label: "com.lostsakura.www.CacheDownloadInfoQueue")
+        super.init()
     }
     
     public required convenience init?(coder aDecoder: NSCoder) {
         guard let fileName = aDecoder.decodeObject(forKey: "fileName") as? String,
             let cacheSegments = aDecoder.decodeObject(forKey:"cacheSegments") as? [NSValue],
-            let downloadInfo = aDecoder.decodeObject(forKey:"downloadInfo") as? [(UInt64, TimeInterval)],
+            //let downloadInfo = aDecoder.decodeObject(forKey:"downloadInfo") as? [(UInt64, TimeInterval)],
             let cacheMedia = aDecoder.decodeObject(forKey:"cacheMedia") as? PlayerCacheMedia,
             let url = aDecoder.decodeObject(forKey:"url") as? URL
             else { return nil }
         self.init()
         self.fileName = fileName
         self.cacheSegments = cacheSegments
-        self.downloadInfo = downloadInfo
+        //self.downloadInfo = downloadInfo
         self.cacheMedia = cacheMedia
         self.url = url
     }
@@ -101,15 +102,15 @@ extension PlayerCacheMediaConfiguration: NSCopying {
     }
 }
 
-extension PlayerCacheMediaConfiguration: CustomStringConvertible {
-    public var description: String {
+extension PlayerCacheMediaConfiguration {
+    public override var description: String {
         return "filePath: \(String(describing: filePath))\n cacheMedia: \(String(describing: cacheMedia))\n url: \(String(describing: url))\n cacheSegments: \(cacheSegments) \n"
     }
 }
 
 extension PlayerCacheMediaConfiguration {
     public static func getFilePath(for filePath: String) -> String {
-        return filePath + "/" + "mediaConfiguration"
+        return filePath + "." + "mediaConfig"
     }
     
     public static func configuration(filePath: String) -> PlayerCacheMediaConfiguration {
@@ -133,7 +134,7 @@ extension PlayerCacheMediaConfiguration {
     public func save() {
         cacheSegmentQueue.sync {
             if let filePath = filePath {
-                //NSKeyedArchiver.archiveRootObject(self, toFile: filePath)
+                NSKeyedArchiver.archiveRootObject(self, toFile: filePath)
             }
         }
     }

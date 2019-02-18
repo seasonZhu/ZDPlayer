@@ -31,7 +31,7 @@ class VerticalFullScreenPlayController: UIViewController {
         
         localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "ad_douyin", ofType: "mp4")!)
         remoteURL = URL(string: "https://github.com/seasonZhu/ZDLaunchAdKit/blob/master/ZDLaunchAdDemo/Source/video1.mp4?raw=true")!
-        let path = PlayerCacheManager.cacheFilePath(for: remoteURL)
+        let path = CacheManager.cacheFilePath(for: remoteURL)
         print(path)
         
         view.addSubview(player.playerView)

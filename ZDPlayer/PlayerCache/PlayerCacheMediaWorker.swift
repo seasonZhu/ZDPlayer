@@ -24,7 +24,7 @@ public class PlayerCacheMediaWorker {
     private let kPackageLength = 204800
     
     public init(url: URL) {
-        let path = PlayerCacheManager.cacheFilePath(for: url)
+        let path = CacheManager.cacheFilePath(for: url)
         writeFileQueue = DispatchQueue(label: "com.lostsakura.www.writeFileQueue")
         filePath = path
         
@@ -85,8 +85,8 @@ extension PlayerCacheMediaWorker {
         return data
     }
     
-    public func cachedDataActions(forRange range:NSRange) -> [PlayerCacheAction] {
-        var actions = [PlayerCacheAction]()
+    public func cachedDataActions(forRange range:NSRange) -> [CacheAction] {
+        var actions = [CacheAction]()
         if range.location == NSNotFound {
             return actions
         }
@@ -105,7 +105,7 @@ extension PlayerCacheMediaWorker {
                         let maxLocation = intersctionRange.location + intersctionRange.length
                         let length = offsetLocation + kPackageLength > maxLocation ? maxLocation - offsetLocation : kPackageLength
                         let range = NSMakeRange(offsetLocation, length)
-                        let action = PlayerCacheAction(type: .local, range: range)
+                        let action = CacheAction(type: .local, range: range)
                         actions.append(action)
                     }
                 } else if segmentRange.location >= endOffset {
@@ -115,17 +115,17 @@ extension PlayerCacheMediaWorker {
         }
         
         if actions.count == 0 {
-            let action = PlayerCacheAction(type: .remote, range: range)
+            let action = CacheAction(type: .remote, range: range)
             actions.append(action)
         }else {
-            var localRemoteActions = [PlayerCacheAction]()
+            var localRemoteActions = [CacheAction]()
             for (index, value) in actions.enumerated() {
                 let actionRange = value.range
                 
                 if index == 0 {
                     if range.location < actionRange.location {
                         let range = NSMakeRange(range.location, actionRange.location - range.location)
-                        let action = PlayerCacheAction(type: .remote, range: range)
+                        let action = CacheAction(type: .remote, range: range)
                         localRemoteActions.append(action)
                     }
                     localRemoteActions.append(value)
@@ -134,7 +134,7 @@ extension PlayerCacheMediaWorker {
                         let lastOffset = lastAction.range.location + lastAction.range.length
                         if actionRange.location > lastOffset {
                             let range = NSMakeRange(lastOffset, actionRange.location - lastOffset)
-                            let action = PlayerCacheAction(type: .remote, range: range)
+                            let action = CacheAction(type: .remote, range: range)
                             localRemoteActions.append(action)
                         }
                     }
@@ -145,7 +145,7 @@ extension PlayerCacheMediaWorker {
                     let localEndOffset = actionRange.location + actionRange.length
                     if endOffset > localEndOffset {
                         let range = NSMakeRange(localEndOffset, endOffset)
-                        let action = PlayerCacheAction(type: .remote, range: range)
+                        let action = CacheAction(type: .remote, range: range)
                         localRemoteActions.append(action)
                     }
                 }

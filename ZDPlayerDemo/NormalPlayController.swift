@@ -28,7 +28,7 @@ class NormalPlayController: UIViewController {
         
         localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "2", ofType: "mp4")!)
         remoteURL = URL(string: "http://lxdqncdn.miaopai.com/stream/6IqHc-OnSMBIt-LQjPJjmA__.mp4?ssig=a81b90fdeca58e8ea15c892a49bce53f&time_stamp=1508166491488")!
-        let path = PlayerCacheManager.cacheFilePath(for: remoteURL)
+        let path = CacheManager.cacheFilePath(for: remoteURL)
         print(path)
         
         view.addSubview(player.playerView)

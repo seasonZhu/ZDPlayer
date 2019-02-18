@@ -364,8 +364,8 @@ extension ZDPlayer {
             let keys = ["tracks", "playable"]
             playerItem = AVPlayerItem(asset: asset, automaticallyLoadedAssetKeys: keys)
         }else {
-            playerItem = noCacheManagerGetPlayerItem(url: url)
-            //playerItem = cacheManagerGetPlayerItem(url: url)
+            //playerItem = noCacheManagerGetPlayerItem(url: url)
+            playerItem = cacheManagerGetPlayerItem(url: url)
         }
         player = AVPlayer(playerItem: playerItem)
         playerView.reloadView()

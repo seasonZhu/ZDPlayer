@@ -21,7 +21,7 @@ extension PlayerDownloaderWorkerDelegate {
 }
 
 public class PlayerDownloaderWorker {
-    public private(set) var actions: [PlayerCacheAction]
+    public private(set) var actions: [CacheAction]
     public private(set) var url: URL
     public private(set) var cacheMediaWorker: PlayerCacheMediaWorker
     
@@ -35,7 +35,7 @@ public class PlayerDownloaderWorker {
     private var isCanceled: Bool = false
     private var notifyTime = 0.0
     
-    public init(actions: [PlayerCacheAction], url: URL, cacheMediaWorker: PlayerCacheMediaWorker) {
+    public init(actions: [CacheAction], url: URL, cacheMediaWorker: PlayerCacheMediaWorker) {
         self.actions = actions
         self.cacheMediaWorker = cacheMediaWorker
         self.url = url
@@ -99,11 +99,11 @@ extension PlayerDownloaderWorker {
     
     func notify(downloadProgressWithFlush isFlush: Bool, isFinished: Bool) {
         let currentTime = CFAbsoluteTimeGetCurrent()
-        let interval = PlayerCacheManager.mediaCacheNotifyInterval
+        let interval = CacheManager.mediaCacheNotifyInterval
         if notifyTime < currentTime - interval || isFlush {
             if let configuration = cacheMediaWorker.cacheMediaConfiguration?.copy() as? PlayerCacheMediaConfiguration {
-                let userInfo = [PlayerCacheManager.CacheConfigurationKey: configuration]
-                NotificationCenter.default.post(name: .PlayerCacheManagerDidUpdateCache, object: self, userInfo: userInfo)
+                let userInfo = [CacheManager.CacheConfigurationKey: configuration]
+                NotificationCenter.default.post(name: .CacheManagerDidUpdateCache, object: self, userInfo: userInfo)
                 
                 if isFinished && configuration.progress >= 1.0 {
                     notify(downloadFinishWithError: nil)
@@ -114,11 +114,11 @@ extension PlayerDownloaderWorker {
     
     func notify(downloadFinishWithError error: Error?) {
         if let configuration = cacheMediaWorker.cacheMediaConfiguration?.copy() {
-            var userInfo = [PlayerCacheManager.CacheConfigurationKey: configuration]
+            var userInfo = [CacheManager.CacheConfigurationKey: configuration]
             if let error = error {
-                userInfo.updateValue(error, forKey: PlayerCacheManager.CacheErrorKey)
+                userInfo.updateValue(error, forKey: CacheManager.CacheErrorKey)
             }
-            NotificationCenter.default.post(name: .PlayerCacheManagerDidFinishCache, object: self, userInfo: userInfo)
+            NotificationCenter.default.post(name: .CacheManagerDidFinishCache, object: self, userInfo: userInfo)
         }
     }
 }

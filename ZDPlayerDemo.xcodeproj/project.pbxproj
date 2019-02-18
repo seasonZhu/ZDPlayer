@@ -15,9 +15,8 @@
 		611CB2D822110DE20009C1A0 /* ZDPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 611CB2D622110DE20009C1A0 /* ZDPlayer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		611CB2DB22110DE20009C1A0 /* ZDPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 611CB2D422110DE20009C1A0 /* ZDPlayer.framework */; };
 		611CB2DC22110DE20009C1A0 /* ZDPlayer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 611CB2D422110DE20009C1A0 /* ZDPlayer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		611CB2E322110ED90009C1A0 /* PlayerCacheAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2E222110ED90009C1A0 /* PlayerCacheAction.swift */; };
-		611CB2E5221111140009C1A0 /* PlayerCacheConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2E4221111140009C1A0 /* PlayerCacheConfiguration.swift */; };
-		611CB2E7221114790009C1A0 /* PlayerCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2E6221114790009C1A0 /* PlayerCacheManager.swift */; };
+		611CB2E322110ED90009C1A0 /* CacheAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2E222110ED90009C1A0 /* CacheAction.swift */; };
+		611CB2E7221114790009C1A0 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2E6221114790009C1A0 /* CacheManager.swift */; };
 		611CB2E92211168F0009C1A0 /* PlayerCacheMedia.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2E82211168F0009C1A0 /* PlayerCacheMedia.swift */; };
 		611CB2EB221119E80009C1A0 /* PlayerCacheMediaConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2EA221119E80009C1A0 /* PlayerCacheMediaConfiguration.swift */; };
 		611CB2ED2211463B0009C1A0 /* PlayerCacheMediaWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2EC2211463B0009C1A0 /* PlayerCacheMediaWorker.swift */; };
@@ -95,9 +94,8 @@
 		611CB2D422110DE20009C1A0 /* ZDPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ZDPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		611CB2D622110DE20009C1A0 /* ZDPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZDPlayer.h; sourceTree = "<group>"; };
 		611CB2D722110DE20009C1A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		611CB2E222110ED90009C1A0 /* PlayerCacheAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCacheAction.swift; sourceTree = "<group>"; };
-		611CB2E4221111140009C1A0 /* PlayerCacheConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCacheConfiguration.swift; sourceTree = "<group>"; };
-		611CB2E6221114790009C1A0 /* PlayerCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCacheManager.swift; sourceTree = "<group>"; };
+		611CB2E222110ED90009C1A0 /* CacheAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheAction.swift; sourceTree = "<group>"; };
+		611CB2E6221114790009C1A0 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		611CB2E82211168F0009C1A0 /* PlayerCacheMedia.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCacheMedia.swift; sourceTree = "<group>"; };
 		611CB2EA221119E80009C1A0 /* PlayerCacheMediaConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCacheMediaConfiguration.swift; sourceTree = "<group>"; };
 		611CB2EC2211463B0009C1A0 /* PlayerCacheMediaWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCacheMediaWorker.swift; sourceTree = "<group>"; };
@@ -226,9 +224,8 @@
 		611CB2E122110DF80009C1A0 /* PlayerCache */ = {
 			isa = PBXGroup;
 			children = (
-				611CB2E6221114790009C1A0 /* PlayerCacheManager.swift */,
-				611CB2E222110ED90009C1A0 /* PlayerCacheAction.swift */,
-				611CB2E4221111140009C1A0 /* PlayerCacheConfiguration.swift */,
+				611CB2E6221114790009C1A0 /* CacheManager.swift */,
+				611CB2E222110ED90009C1A0 /* CacheAction.swift */,
 				611CB2E82211168F0009C1A0 /* PlayerCacheMedia.swift */,
 				611CB2EA221119E80009C1A0 /* PlayerCacheMediaConfiguration.swift */,
 				611CB2EC2211463B0009C1A0 /* PlayerCacheMediaWorker.swift */,
@@ -493,12 +490,11 @@
 			files = (
 				611CB2EF221167750009C1A0 /* PlayerCacheSession.swift in Sources */,
 				611CB2ED2211463B0009C1A0 /* PlayerCacheMediaWorker.swift in Sources */,
-				611CB2E5221111140009C1A0 /* PlayerCacheConfiguration.swift in Sources */,
 				611CB3012212A0FA0009C1A0 /* PlayerError.swift in Sources */,
 				611CB30C2212A9570009C1A0 /* ZDPlayer.swift in Sources */,
 				611CB2F5221169250009C1A0 /* PlayerDownloaderWorker.swift in Sources */,
 				611CB30A2212A6B70009C1A0 /* Subtitles.swift in Sources */,
-				611CB2E7221114790009C1A0 /* PlayerCacheManager.swift in Sources */,
+				611CB2E7221114790009C1A0 /* CacheManager.swift in Sources */,
 				611CB2F72212737B0009C1A0 /* PlayerResourceLoaderManager.swift in Sources */,
 				61D43A3B2216A9A90095B667 /* BrightnessView.swift in Sources */,
 				611CB3032212A15A0009C1A0 /* PlayerSlider.swift in Sources */,
@@ -510,7 +506,7 @@
 				611CB2FB221274E70009C1A0 /* PlayerResourceLoadingRequest.swift in Sources */,
 				611CB2E92211168F0009C1A0 /* PlayerCacheMedia.swift in Sources */,
 				611CB2FF2212A0980009C1A0 /* LoadingIndicator.swift in Sources */,
-				611CB2E322110ED90009C1A0 /* PlayerCacheAction.swift in Sources */,
+				611CB2E322110ED90009C1A0 /* CacheAction.swift in Sources */,
 				611CB2FD2212A0320009C1A0 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
