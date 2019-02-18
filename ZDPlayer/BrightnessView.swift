@@ -11,10 +11,26 @@ import Foundation
 /// 高仿系统亮度进度条 参考macOS的亮度进度条
 public class BrightnessView: UIView {
     
-    /// 单例
-    public static let share = BrightnessView()
+    /*
+     这里我将亮度显示写成可选的目的就是为了可以设置为nil.这样就不会在内存中常驻了
+     */
     
-    /// 私有属性
+    /// 单例
+    private static var _share: BrightnessView?
+    
+    public static func instance() -> BrightnessView {
+        guard  let share = _share else {
+            _share = BrightnessView()
+            return _share!
+        }
+        return share
+    }
+    
+    public static func destoryInstance() {
+        _share = nil
+    }
+    
+    //MARK:- 私有属性
     private lazy var backImage: UIImageView = {
         let backImage = UIImageView(frame: CGRect(x: 0, y: 0, width: 79, height: 76))
         backImage.image = BundleManager.image(named: "brightness")
@@ -51,7 +67,7 @@ public class BrightnessView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - layoutSubviews
+    //MARK: - layoutSubviews
     public override func layoutSubviews() {
         super.layoutSubviews()
         //InterfaceOrientation值

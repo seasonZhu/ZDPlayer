@@ -156,7 +156,7 @@ public class ZDPlayer: NSObject {
     public var bufferInterval: TimeInterval = 2.0
     
     /// 视频格式
-    public private(set) var mediaFormatt: MediaFormat
+    public private(set) var mediaFormat: MediaFormat
     
     /// 视频整体时间
     public private(set) var totalDuration : TimeInterval = 0.0
@@ -215,7 +215,7 @@ public class ZDPlayer: NSObject {
     ///   - url: 播放地址
     ///   - playerView: 播放层
     public init(url: URL?, playerView: ZDPlayerView?) {
-        mediaFormatt = MediaFormat.analyzeVideoFormat(url: url)
+        mediaFormat = MediaFormat.analyzeVideoFormat(url: url)
         resourceLoaderManager = PlayerResourceLoaderManager()
         contentURL = url
         error = PlayerError()
@@ -267,7 +267,7 @@ extension ZDPlayer {
     /// - Parameter url: 视频资源网址
     public func loadVideo(url: URL) {
         reloadPlayer()
-        mediaFormatt = MediaFormat.analyzeVideoFormat(url: url)
+        mediaFormat = MediaFormat.analyzeVideoFormat(url: url)
         contentURL = url
         setUpPlayer(url: url)
     }
@@ -336,18 +336,14 @@ extension ZDPlayer {
             completion?(false)
             return
         }
-        
-        DispatchQueue.main.async {
-            self.isSeeking = true
-            self.startPlayerBuffering()
-            self.playerItem?.seek(to: CMTimeMakeWithSeconds(time, preferredTimescale: Int32(NSEC_PER_SEC))) { [weak self] (finished) in
-                DispatchQueue.main.async {
-                    self?.isSeeking = false
-                    self?.stopPlayerBuffering()
-                    self?.play()
-                    completion?(finished)
-                }
-            }
+    
+        isSeeking = true
+        startPlayerBuffering()
+        playerItem?.seek(to: CMTimeMakeWithSeconds(time, preferredTimescale: Int32(NSEC_PER_SEC))) { [weak self] (finished) in
+            self?.isSeeking = false
+            self?.stopPlayerBuffering()
+            self?.play()
+            completion?(finished)
         }
     }
     
@@ -434,10 +430,9 @@ extension ZDPlayer {
     
     /// 添加playerItem的观察
     func addPlayerItemObserver() {
-        let options = NSKeyValueObservingOptions([.new, .initial])
-        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: options, context: nil)
-        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.loadedTimeRanges), options: options, context: nil)
-        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: options, context: nil)
+        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: [.new, .initial], context: nil)
+        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.loadedTimeRanges), options: [.new, .initial], context: nil)
+        playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: [.new, .initial], context: nil)
     }
     
     /// 移除playerItem的观察

@@ -165,7 +165,7 @@ open class ZDPlayerView: UIView {
     /// 声音强度条
     public var volumeSlider: UISlider!
     
-    /// 亮度强度条 这个应该会要求自定义
+    /// 亮度强度条 高仿系统
     public var brightnessSlider: BrightnessView?
     
     /// 滑动手势的方向 默认是横向
@@ -253,6 +253,7 @@ open class ZDPlayerView: UIView {
         timer = nil
         playerLayer?.removeFromSuperlayer()
         NotificationCenter.default.removeObserver(self)
+        BrightnessView.destoryInstance()
     }
     
     //MARK:- 对外可重写方法,open修饰的方法不能写在extension中
@@ -349,7 +350,7 @@ open class ZDPlayerView: UIView {
         guard let playerLayer = playerLayer else { return }
         layer.insertSublayer(playerLayer, at: 0)
         updatePlayerView(frame: bounds)
-        timeSlider.isUserInteractionEnabled = player?.mediaFormatt != .m3u8
+        timeSlider.isUserInteractionEnabled = player?.mediaFormat != .m3u8
         reloadGravity()
     }
     
@@ -454,6 +455,7 @@ extension ZDPlayerView {
     /// 延迟播放组件消失
     func delayPlayControlViewDisappear() {
         timer?.invalidate()
+        /// 这个地方我觉得不使用扩展分类,使用系统的方法,也不会导致循环引用
         timer = Timer.scheduledTimer(timeInterval: controlViewDuration, repeats: false) { [weak self] in
             self?.playControlViewShow(false)
         }
@@ -461,9 +463,7 @@ extension ZDPlayerView {
     
     /// 获取声音进度条
     func getVolumeSlider() {
-        
         //  引入MediaPlayer就是为了获取系统的声音进度条
-        
         let volumeView = MPVolumeView()
         if let view = volumeView.subviews.first as? UISlider {
             volumeSlider = view
@@ -473,10 +473,7 @@ extension ZDPlayerView {
     
     /// 获取亮度进度条
     func getBrightnessSlider() {
-        /*
-         这个好像获取不到系统的 需要自己封装呀
-         */
-        brightnessSlider = BrightnessView.share
+        brightnessSlider = BrightnessView.instance()
     }
 }
 
@@ -705,6 +702,9 @@ extension ZDPlayerView {
         isFullScreen ? enterFullScreen() : exitFullscreen()
     }
     
+    /// 静音按钮的点击事件
+    ///
+    /// - Parameter button: 按钮
     @objc
     func onSound(_ button: UIButton) {
         button.isSelected = !button.isSelected
@@ -816,7 +816,7 @@ extension ZDPlayerView {
             }
             //  横向滑动
             else if x > y {
-                guard player?.mediaFormatt == .m3u8 else {
+                guard player?.mediaFormat == .m3u8 else {
                     panGestureDirection = .horizontal
                     return
                 }
@@ -839,9 +839,9 @@ extension ZDPlayerView {
                     isVolume = false
                 }
             }
-                //  横向滑动
+            //  横向滑动
             else if x > y {
-                guard player?.mediaFormatt == .m3u8 else {
+                guard player?.mediaFormat == .m3u8 else {
                     panGestureDirection = .horizontal
                     return
                 }
@@ -901,8 +901,8 @@ extension ZDPlayerView {
         if isVolume {
             volumeSlider.value -= Float(velocityY / 10000)
             lastSoundValue = volumeSlider.value
-            if BrightnessView.share.alpha == 1 {
-                BrightnessView.share.alpha = 0
+            if BrightnessView.instance().alpha == 1 {
+                BrightnessView.instance().alpha = 0
             }
             soundButton.isSelected = volumeSlider.value == 0
         }else {
