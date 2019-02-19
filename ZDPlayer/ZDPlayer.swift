@@ -480,8 +480,10 @@ extension ZDPlayer {
         switch backgroundMode {
         case .suspend:
             pause()
-        case .autoPlayAndPaused, .proceed:
+        case .autoPlayAndPaused:
             play()
+        case .proceed:
+            break
         }
     }
     
