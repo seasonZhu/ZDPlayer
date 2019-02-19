@@ -133,7 +133,7 @@ extension CacheMediaInfo {
     /// - Returns: info的路径
     public static func getMediaInfoPath(for filePath: String) -> String {
         let nsString = filePath as NSString
-        return nsString.appendingPathExtension("conf")!
+        return nsString.deletingPathExtension + ".conf"
     }
     
     /// 获取MediaInfo的模型
@@ -149,7 +149,6 @@ extension CacheMediaInfo {
             defaultInfo.fileName = (filePath as NSString).lastPathComponent
             return defaultInfo
         }
-        //let mediaInfo = configuration as! CacheMediaInfo
         mediaInfo.filePath = path
         return mediaInfo
     }

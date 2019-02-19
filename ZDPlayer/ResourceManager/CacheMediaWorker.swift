@@ -32,8 +32,8 @@ public class CacheMediaWorker {
     /// 开始写入的数据
     private var startWriteDate: Date?
     
-    /// 写入的进度
-    private var writeBytes: Double = 0.0
+    /// 写入的数据长度
+    private var writeBytesLength: Double = 0.0
     
     /// 是否正在写入数据
     private var isWritting: Bool = false
@@ -117,7 +117,7 @@ extension CacheMediaWorker {
     public func writeCache(data: Data, forRange range: NSRange, callback: (Bool) -> Void) {
         writeFileQueue.sync {
             if let _ = writeFileHandle?.seek(toFileOffset: UInt64(range.location)), let _ = writeFileHandle?.write(data) {
-                writeBytes += Double(data.count)
+                writeBytesLength += Double(data.count)
                 mediaInfo?.addCache(segment: range)
                 callback(true)
             }else {
@@ -240,7 +240,7 @@ extension CacheMediaWorker {
         }
         isWritting = true
         startWriteDate = Date()
-        writeBytes = 0.0
+        writeBytesLength = 0.0
     }
     
     /// 结束写入
@@ -250,7 +250,7 @@ extension CacheMediaWorker {
             NotificationCenter.default.removeObserver(self)
             if let startWriteDate = startWriteDate {
                 let time = Date().timeIntervalSince(startWriteDate)
-                mediaInfo?.addDownloadInfo(downloadedBytes: UInt64(writeBytes), time: time)
+                mediaInfo?.addDownloadInfo(downloadedBytes: UInt64(writeBytesLength), time: time)
             }
         }
     }
