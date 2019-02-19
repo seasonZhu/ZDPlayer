@@ -33,7 +33,7 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
     private var fileName: String?
     
     /// 下载信息
-    private var downloadInfo = [Any]()
+    private var downloadInfos = [DownloadInfo]()
     
     /// 进度
     public private(set) var progress: Double = 0.0 {
@@ -59,20 +59,16 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
         }
     }
     
-    /// 下载速度
-    public private(set) var downloadSpeed: Double? { // kb/s
+    /// 下载速度 kb/s
+    public private(set) var downloadSpeed: Double? {
         didSet {
             var bytes: UInt64 = 0
             var time = 0.0
-            if downloadInfo.count > 0 {
+            if downloadInfos.count > 0 {
                 cacheDownloadInfoQueue.sync {
-                    for array in downloadInfo {
-                        if let arr = array as? Array<Any>, let first = arr.first as? UInt64, let last = arr.last as? TimeInterval {
-                            bytes += first
-                            time += last
-                        } else {
-                            break
-                        }
+                    for array in downloadInfos {
+                        bytes += array.downloadedBytes
+                        time += array.time
                     }
                 }
             }
@@ -83,8 +79,8 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
     /// NSCoding
     public required convenience init?(coder aDecoder: NSCoder) {
         guard let fileName = aDecoder.decodeObject(forKey: "fileName") as? String,
-            let cacheSegments = aDecoder.decodeObject(forKey:"cacheSegments") as? Array<NSValue>,
-            let downloadInfo = aDecoder.decodeObject(forKey:"downloadInfo") as? Array<Any>,
+            let cacheSegments = aDecoder.decodeObject(forKey:"cacheSegments") as? [NSValue],
+            let downloadInfos = aDecoder.decodeObject(forKey:"downloadInfo") as? [DownloadInfo],
             let cacheMedia = aDecoder.decodeObject(forKey:"cacheMedia") as? CacheMedia,
             let url = aDecoder.decodeObject(forKey:"url") as? URL
             else {
@@ -94,7 +90,7 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
         self.init()
         self.fileName = fileName
         self.cacheSegments = cacheSegments
-        self.downloadInfo = downloadInfo
+        self.downloadInfos = downloadInfos
         self.cacheMedia = cacheMedia
         self.url = url
     }
@@ -102,7 +98,7 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
     public func encode(with aCoder: NSCoder) {
         aCoder.encode(fileName, forKey: "fileName")
         aCoder.encode(cacheSegments, forKey: "cacheSegments")
-        aCoder.encode(downloadInfo, forKey: "downloadInfo")
+        aCoder.encode(downloadInfos, forKey: "downloadInfo")
         aCoder.encode(cacheMedia, forKey: "cacheMedia")
         aCoder.encode(url, forKey: "url")
     }
@@ -116,7 +112,7 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
         mediaInfo.cacheMedia = cacheMedia
         mediaInfo.url = url
         mediaInfo.fileName = fileName
-        mediaInfo.downloadInfo = downloadInfo
+        mediaInfo.downloadInfos = downloadInfos
         return mediaInfo
     }
     
@@ -160,7 +156,8 @@ extension CacheMediaInfo {
     /// 保存MediaInfo
     public func save() {
         cacheSegmentQueue.sync {
-            let _ = NSKeyedArchiver.archiveRootObject(self, toFile: filePath!)
+            guard let filePath = filePath else { return }
+            let _ = NSKeyedArchiver.archiveRootObject(self, toFile: filePath)
         }
     }
     
@@ -241,9 +238,10 @@ extension CacheMediaInfo {
     ///   - time: 下载花费的时间
     public func addDownloadInfo(downloadedBytes: UInt64, time: TimeInterval) {
         cacheDownloadInfoQueue.sync {
-            var downloadInfo = self.downloadInfo
-            downloadInfo.append([downloadedBytes, time])
-            self.downloadInfo = downloadInfo
+            let downloadInfo = DownloadInfo()
+            downloadInfo.downloadedBytes = downloadedBytes
+            downloadInfo.time = time
+            self.downloadInfos.append(downloadInfo)
         }
     }
 }
@@ -260,13 +258,13 @@ class DownloadInfo: NSObject, NSCoding {
     /// NSCoding
     func encode(with aCoder: NSCoder) {
         aCoder.encode(downloadedBytes, forKey: "downloadedBytes")
-        aCoder.encode(time, forKey: "time")
+        aCoder.encode(NSNumber(value: time), forKey: "time") // 注意Double类型不能被NSCoding序列化, Double是struct Int/UInt也是struct 搞不懂 Double -> NSNumber
     }
 
     required init?(coder aDecoder: NSCoder) {
         super.init()
         self.downloadedBytes = aDecoder.decodeObject(forKey: "downloadedBytes") as? UInt64 ?? 0
-        self.time = aDecoder.decodeObject(forKey:"time") as? TimeInterval ?? 0
+        self.time = (aDecoder.decodeObject(forKey:"time") as? NSNumber)?.doubleValue ?? 0
     }
 }
 
