@@ -841,10 +841,7 @@ extension ZDPlayerView {
             }
             //  横向滑动
             else if x > y {
-                guard player?.mediaFormat == .m3u8 else {
-                    panGestureDirection = .horizontal
-                    return
-                }
+                panGestureDirection = .horizontal
             }else {
                 
             }

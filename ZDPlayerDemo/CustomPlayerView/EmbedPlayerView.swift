@@ -43,12 +43,12 @@ class EmbedPlayerView: ZDPlayerView {
             make.height.equalTo(3)
         }
         
+        panGesture.isEnabled = false
     }
     
     func configureGesture() {
         doubleTapGesture.isEnabled = !isSmallMode
         singleTapGesture.isEnabled = !isSmallMode
-        panGesture.isEnabled = !isSmallMode
     }
     
     
