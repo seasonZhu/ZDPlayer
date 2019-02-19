@@ -248,6 +248,28 @@ extension CacheMediaInfo {
     }
 }
 
+class DownloadInfo: NSObject, NSCoding {
+
+    var downloadedBytes: UInt64 = 0
+    var time: TimeInterval = 0
+    
+    override init() {
+        super.init()
+    }
+    
+    /// NSCoding
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(downloadedBytes, forKey: "downloadedBytes")
+        aCoder.encode(time, forKey: "time")
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init()
+        self.downloadedBytes = aDecoder.decodeObject(forKey: "downloadedBytes") as? UInt64 ?? 0
+        self.time = aDecoder.decodeObject(forKey:"time") as? TimeInterval ?? 0
+    }
+}
+
 //public class CacheMediaInfo: NSObject, NSCoding {
 //
 //    /// 文件路径
@@ -474,22 +496,3 @@ extension CacheMediaInfo {
 //    }
 //}
 //
-//class DownloadInfo: NSObject, NSCoding {
-//
-//    var downloadedBytes: UInt64 = 0
-//    var time: TimeInterval = 0
-//
-//    required convenience init?(coder aDecoder: NSCoder) {
-//        guard let downloadedBytes = aDecoder.decodeObject(forKey: "downloadedBytes") as? UInt64,
-//            let time = aDecoder.decodeObject(forKey:"time") as? TimeInterval
-//            else { return nil }
-//        self.init()
-//        self.downloadedBytes = downloadedBytes
-//        self.time = time
-//    }
-//
-//    public func encode(with aCoder: NSCoder) {
-//        aCoder.encode(downloadedBytes, forKey: "downloadedBytes")
-//        aCoder.encode(time, forKey: "time")
-//    }
-//}
