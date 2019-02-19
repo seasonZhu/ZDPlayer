@@ -8,8 +8,12 @@
 
 import Foundation
 
+/*
+ NSCoding, NSCopying 协议的大前提是类必须继承NSObject呀
+ */
+
 /// 多媒体下载配置信息
-public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
+public class CacheMediaInfo: NSObject, NSCoding, NSCopying, Codable {
     
     /// 信息路径
     public private(set) var filePath: String?
@@ -124,6 +128,14 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
     
     public override var description: String {
         return "filePath: \(String(describing: filePath))\n cacheMedia: \(String(describing: cacheMedia))\n url: \(String(describing: url))\n cacheSegments: \(cacheSegments) \n"
+    }
+    
+    required public convenience init(from decoder: Decoder) {
+        self.init()
+    }
+    
+    public func encode(to encoder: Encoder) {
+        
     }
 }
 

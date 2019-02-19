@@ -9,7 +9,7 @@
 import Foundation
 
 /// 多媒体请求信息
-public class CacheMedia: NSObject, NSCoding {
+public class CacheMedia: NSObject, NSCoding, Codable {
     
     /// 文件类型
     public var contentType: String?
@@ -46,6 +46,14 @@ public class CacheMedia: NSObject, NSCoding {
         } else {
             downloadedLength = 0
         }
+    }
+    
+    required public init(from decoder: Decoder) {
+        
+    }
+    
+    public func encode(to encoder: Encoder) {
+        
     }
 }
 
