@@ -9,10 +9,12 @@
 import Foundation
 import AVFoundation
 
+/// 资源加载管理器代理
 public protocol ResourceLoaderManagerDelegate: class {
     func resourceLoaderManager(_ resourceLoaderManager: ResourceLoaderManager, loadURL: URL, didFailWithError error: Error?)
 }
 
+/// 资源加载管理器
 public class ResourceLoaderManager: NSObject {
     
     /// 资源加载管理器的代理
@@ -139,6 +141,7 @@ extension ResourceLoaderManager: AVAssetResourceLoaderDelegate {
     }
 }
 
+// MARK: - 资源加载器代理
 extension ResourceLoaderManager: ResourceLoaderDelegate {
     public func resourceLoader(_ resourceLoader: ResourceLoader, didFailWithError error: Error?) {
         resourceLoader.cancel()

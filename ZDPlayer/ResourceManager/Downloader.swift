@@ -91,7 +91,7 @@ public class Downloader {
 
 extension Downloader {
     
-    /// 进程操作
+    /// 操作
     func processAction() {
         if isCanceled {
             return
@@ -135,11 +135,11 @@ extension Downloader {
         let currentTime = CFAbsoluteTimeGetCurrent()
         let interval = CacheManager.mediaCacheNotifyInterval
         if notifyTime < currentTime - interval || isFlush {
-            if let configuration = cacheMediaWorker.mediaInfo?.copy() as? CacheMediaInfo {
-                let userInfo = [CacheManager.CacheConfigurationKey: configuration]
+            if let mediaInfo = cacheMediaWorker.mediaInfo?.copy() as? CacheMediaInfo {
+                let userInfo = [CacheManager.CacheConfigurationKey: mediaInfo]
                 NotificationCenter.default.post(name: .CacheManagerDidUpdateCache, object: self, userInfo: userInfo)
                 
-                if isFinished && configuration.progress >= 1.0 {
+                if isFinished && mediaInfo.progress >= 1.0 {
                     notify(downloadFinishWithError: nil)
                 }
             }
@@ -160,7 +160,8 @@ extension Downloader {
     }
 }
 
-extension Downloader: DownloaderSessionDelegate {
+// MARK: - sessionDelegate的代理 其实这里意图仿照Alamofire 但是感觉在这里的效果很一般
+extension Downloader: SessionDelegateProtocol {
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         if let mimeType = response.mimeType {
             if mimeType.range(of: "video/") == nil

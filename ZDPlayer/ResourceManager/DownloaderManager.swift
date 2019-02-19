@@ -9,14 +9,19 @@
 import Foundation
 import MobileCoreServices
 
+/// 下载管理器状态
 public struct DownloaderManagerStatus {
     
+    /// 单例 这里使用var其实对于一个单例而言并不是很好,这样写
+    public static var share = DownloaderManagerStatus()
+    
+    /// 正在下载资源集合
     private var downloadingURLs: Set<URL>
     //fileprivate let downloaderStatusQueue: DispatchQueue
     
-    public static var share = DownloaderManagerStatus()
+    /// 私有化初始化方法
     private init() {
-        //downloaderStatusQueue = DispatchQueue(label: "com.vgplayer.downloaderStatusQueue")
+        //downloaderStatusQueue = DispatchQueue(label: "com.lostsakura.www.downloaderManagerStatusQueue")
         downloadingURLs = Set<URL>()
     }
     
@@ -24,19 +29,31 @@ public struct DownloaderManagerStatus {
      这个地方的添加与删除 我并没同步线程,不知道会不会有问题
      应该说我使用同步线程 系统提示我这么做没有意义
      */
+    
+    /// 添加资源到正在下载资源集合
+    ///
+    /// - Parameter url: 资源网址
     public mutating func insert(url: URL) {
         downloadingURLs.insert(url)
     }
     
+    /// 移除资源到正在下载资源集合
+    ///
+    /// - Parameter url: 资源网址
     public mutating func remove(url: URL) {
         downloadingURLs.remove(url)
     }
     
+    /// 正在下载资源集合是否包含该资源网址
+    ///
+    /// - Parameter url: 资源网址
+    /// - Returns: Bool
     public func contains(url: URL) -> Bool {
         return downloadingURLs.contains(url)
     }
     
-    public func urls() -> [URL] {
+    /// Set转Array
+    public var downloadingUrls: [URL] {
         return Array(downloadingURLs)
     }
 }
@@ -57,19 +74,37 @@ extension DownloaderManagerDelegate {
 
 /// 下载管理器
 public class DownloaderManager {
+    
+    /// 资源网址
     public private(set) var url: URL
+    
+    /// 代理
     public weak var delegate: DownloaderManagerDelegate?
+    
+    /// 多媒体请求信息
     public var cacheMedia: CacheMedia?
+    
+    /// 多媒体工作器
     public let cacheMediaWorker: CacheMediaWorker
     
+    /// 请求Session
     private let session: URLSession
+    
+    /// 是否从始到终的下载
     private var isDownloadToEnd = false
+    
+    /// 下载器
     private var downloader: Downloader?
+    
+    /// 当前资源是否正在下载
     private var isCurrentURLDownloading: Bool {
         return DownloaderManagerStatus.share.contains(url: url)
     }
     
-    init(url: URL) {
+    /// 初始化方法
+    ///
+    /// - Parameter url: 资源网址
+    public init(url: URL) {
         self.url = url
         cacheMediaWorker = CacheMediaWorker(url: url)
         cacheMedia = cacheMediaWorker.mediaInfo?.cacheMedia
@@ -101,6 +136,7 @@ public class DownloaderManager {
         downloader?.start()
     }
     
+    /// 从始到终的下载
     public func downloadFrameStartToEnd() {
         if isCurrentURLDownloading {
             handleCurrentURLDownloadingError()
@@ -117,10 +153,12 @@ public class DownloaderManager {
         downloader?.start()
     }
     
+    /// 取消 和下面的一样
     public func cancel() {
         invalidateAndCancel()
     }
     
+    /// 作废并取消
     public func invalidateAndCancel() {
         DownloaderManagerStatus.share.remove(url: url)
         downloader?.cancel()
@@ -131,6 +169,7 @@ public class DownloaderManager {
 
 extension DownloaderManager {
     
+    /// 构成正在下载的错误
     func handleCurrentURLDownloadingError() {
         let userInfo = [NSLocalizedDescriptionKey: "URL: \(url) alreay in downloading queue."]
         let error = NSError(domain: "com.lostsakura.www.DownloaderManager", code: -1, userInfo: userInfo)
@@ -138,6 +177,7 @@ extension DownloaderManager {
     }
 }
 
+// MARK: - 下载器的代理
 extension DownloaderManager: DownloaderDelegate {
     public func downloader(_ downloader: Downloader, didReceive response: URLResponse) {
         if cacheMedia == nil {

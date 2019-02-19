@@ -13,14 +13,15 @@ public class CacheManager {
     
     
     /// CacheConfigurationKey
-    static public let CacheConfigurationKey = "CacheConfigurationKey"
+    public static let CacheConfigurationKey = "CacheConfigurationKey"
     
     /// CacheErrorKey
-    static public let CacheErrorKey = "CacheErrorKey"
+    public static let CacheErrorKey = "CacheErrorKey"
     
     /// CacheClearKey
-    static public let CacheClearKey = "CacheClearKey"
+    public static let CacheClearKey = "CacheClearKey"
     
+    /// 多媒体缓存通知间隔
     public static var mediaCacheNotifyInterval = 0.1
     
     /// 沙盒保存期限
@@ -193,6 +194,7 @@ extension CacheManager {
     }
 }
 
+// MARK: - 字典key通过value的升序进行排列后返回[key]数组
 extension Dictionary {
     func keysSortedByValue(_ isOrderedBefore: (Value, Value) -> Bool) -> [Key] {
         return Array(self).sorted { isOrderedBefore($0.1, $1.1) }.map{ $0.0 }

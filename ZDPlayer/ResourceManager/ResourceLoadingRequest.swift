@@ -89,6 +89,7 @@ extension ResourceLoadingRequest {
     }
 }
 
+// MARK: - 下载管理器代理
 extension ResourceLoadingRequest: DownloaderManagerDelegate {
     public func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveResponse response: URLResponse) {
         setCacheMediaToAVAssetResourceLoadingRequest()

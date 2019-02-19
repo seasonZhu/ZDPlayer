@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// 多媒体下载配置信息
 public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
     
     /// 信息路径
@@ -65,10 +66,10 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
             var time = 0.0
             if downloadInfo.count > 0 {
                 cacheDownloadInfoQueue.sync {
-                    for a in downloadInfo {
-                        if let arr = a as? Array<Any>{
-                            bytes += arr.first as! UInt64
-                            time += arr.last as! TimeInterval
+                    for array in downloadInfo {
+                        if let arr = array as? Array<Any>, let first = arr.first as? UInt64, let last = arr.last as? TimeInterval {
+                            bytes += first
+                            time += last
                         } else {
                             break
                         }
@@ -79,7 +80,7 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
         }
     }
     
-    // NSCoding & NSCoying
+    /// NSCoding
     public required convenience init?(coder aDecoder: NSCoder) {
         guard let fileName = aDecoder.decodeObject(forKey: "fileName") as? String,
             let cacheSegments = aDecoder.decodeObject(forKey:"cacheSegments") as? Array<NSValue>,
@@ -106,6 +107,7 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
         aCoder.encode(url, forKey: "url")
     }
     
+    /// NSCoying
     public func copy(with zone: NSZone? = nil) -> Any {
         let mediaInfo = CacheMediaInfo()
         mediaInfo.filePath = filePath
@@ -153,8 +155,10 @@ extension CacheMediaInfo {
     }
 }
 
-// MARK: - Update
+// MARK: - 更新
 extension CacheMediaInfo {
+    
+    /// 保存MediaInfo
     public func save() {
         cacheSegmentQueue.sync {
             let _ = NSKeyedArchiver.archiveRootObject(self, toFile: filePath!)
@@ -162,6 +166,9 @@ extension CacheMediaInfo {
     }
     
     
+    /// 添加缓存段的范围
+    ///
+    /// - Parameter segment: NSRange
     public func addCache(segment: NSRange) {
         if segment.location == NSNotFound || segment.length == 0 {
             return
@@ -228,7 +235,12 @@ extension CacheMediaInfo {
         
     }
     
-    public func add(downloadedBytes: UInt64, time: TimeInterval) {
+    /// 添加downloadInfo
+    ///
+    /// - Parameters:
+    ///   - downloadedBytes: 已下载的字节数
+    ///   - time: 下载花费的时间
+    public func addDownloadInfo(downloadedBytes: UInt64, time: TimeInterval) {
         cacheDownloadInfoQueue.sync {
             var downloadInfo = self.downloadInfo
             downloadInfo.append([downloadedBytes, time])

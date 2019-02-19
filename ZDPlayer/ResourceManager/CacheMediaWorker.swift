@@ -8,21 +8,45 @@
 
 import Foundation
 
+/// 多媒体工作器
 public class CacheMediaWorker {
-    public fileprivate(set) var mediaInfo: CacheMediaInfo?
-    public fileprivate(set) var initError: Error?
     
+    /// 多媒体下载信息
+    public private(set) var mediaInfo: CacheMediaInfo?
+    
+    /// 初始化标记的错误
+    public private(set) var initError: Error?
+    
+    /// 读Handle
     private var readFileHandle: FileHandle?
+    
+    /// 写Handle
     private var writeFileHandle: FileHandle?
+    
+    /// 文件路径
     private var filePath: String
+    
+    /// 当前的数据偏移
     private var currentOffset: UInt64?
+    
+    /// 开始写入的数据
     private var startWriteDate: Date?
+    
+    /// 写入的进度
     private var writeBytes: Double = 0.0
+    
+    /// 是否正在写入数据
     private var isWritting: Bool = false
     
+    /// 写文件的队列
     private let writeFileQueue: DispatchQueue
+    
+    /// 数据包长
     private let kPackageLength = 204800
     
+    /// 初始化方法
+    ///
+    /// - Parameter url: 资源网址
     public init(url: URL) {
         let path = CacheManager.cacheFilePath(for: url)
         writeFileQueue = DispatchQueue(label: "com.lostsakura.www.writeFileQueue")
@@ -73,6 +97,7 @@ public class CacheMediaWorker {
         initError = err
     }
     
+    /// 析构函数
     deinit {
         NotificationCenter.default.removeObserver(self)
         save()
@@ -82,6 +107,13 @@ public class CacheMediaWorker {
 }
 
 extension CacheMediaWorker {
+    
+    /// 写入缓存数据
+    ///
+    /// - Parameters:
+    ///   - data: 数据
+    ///   - range: 数据的range
+    ///   - callback: 是否写入成功
     public func writeCache(data: Data, forRange range: NSRange, callback: (Bool) -> Void) {
         writeFileQueue.sync {
             if let _ = writeFileHandle?.seek(toFileOffset: UInt64(range.location)), let _ = writeFileHandle?.write(data) {
@@ -94,13 +126,21 @@ extension CacheMediaWorker {
         }
     }
     
+    /// 读取缓存数据段
+    ///
+    /// - Parameter range: 数据的range
+    /// - Returns: 数据
     public func readCache(forRange range: NSRange) -> Data? {
         readFileHandle?.seek(toFileOffset: UInt64(range.location))
         let data = readFileHandle?.readData(ofLength: range.length)
         return data
     }
     
-    public func cachedDataActions(forRange range:NSRange) -> [CacheAction] {
+    /// 通过数据的range获取缓存行为
+    ///
+    /// - Parameter range: 数据的range
+    /// - Returns: 连续的缓存行为数组
+    public func cachedDataActions(forRange range: NSRange) -> [CacheAction] {
         var actions = [CacheAction]()
         if range.location == NSNotFound {
             return actions
@@ -172,6 +212,10 @@ extension CacheMediaWorker {
         return actions
     }
     
+    /// set CacheMedia
+    ///
+    /// - Parameter cacheMedia: CacheMedia
+    /// - Returns: set是否成功
     public func set(cacheMedia: CacheMedia) -> Bool {
         mediaInfo?.cacheMedia = cacheMedia
         if let _ = writeFileHandle?.truncateFile(atOffset: UInt64(cacheMedia.contentLength)), let _ = writeFileHandle?.synchronizeFile() {
@@ -181,6 +225,7 @@ extension CacheMediaWorker {
         }
     }
     
+    /// 保存
     public func save() {
         writeFileQueue.sync {
             writeFileHandle?.synchronizeFile()
@@ -188,6 +233,7 @@ extension CacheMediaWorker {
         }
     }
     
+    /// 开始写入
     public func startWritting() {
         if !isWritting {
             NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -197,17 +243,21 @@ extension CacheMediaWorker {
         writeBytes = 0.0
     }
     
+    /// 结束写入
     public func finishWritting() {
         if isWritting {
             isWritting = false
             NotificationCenter.default.removeObserver(self)
             if let startWriteDate = startWriteDate {
                 let time = Date().timeIntervalSince(startWriteDate)
-                mediaInfo?.add(downloadedBytes: UInt64(writeBytes), time: time)
+                mediaInfo?.addDownloadInfo(downloadedBytes: UInt64(writeBytes), time: time)
             }
         }
     }
     
+    /// 开始写入的时候程序进入后台的操作
+    ///
+    /// - Parameter notification: 通知
     @objc
     func applicationDidEnterBackground(_ notification: Notification) {
         save()

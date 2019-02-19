@@ -19,9 +19,18 @@ public enum CacheType {
 
 /// 缓存行为
 public struct CacheAction {
+    
+    /// 缓存类型
     public let type: CacheType
+    
+    /// 缓存数据段的range
     public let range: NSRange
 
+    /// 初始化方法
+    ///
+    /// - Parameters:
+    ///   - type: 缓存类型
+    ///   - range: 缓存数据段的range
     public init(type: CacheType, range: NSRange) {
         self.type = type
         self.range = range

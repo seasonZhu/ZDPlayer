@@ -9,7 +9,7 @@
 import Foundation
 
 /// 下载管理器代理
-public protocol DownloaderSessionDelegate: class {
+public protocol SessionDelegateProtocol: class {
     
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void)
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data)
@@ -18,13 +18,23 @@ public protocol DownloaderSessionDelegate: class {
 
 /// 下载管理器
 public class SessionDelegate: NSObject {
+    
+    /// 缓冲段的长度
     private let kBufferSize = 10 * 1024
+    
+    /// 缓冲数据
     private var bufferData: NSMutableData!
+    
+    /// 缓冲队列
     private let bufferDataQueue: DispatchQueue
     
-    public weak var delegate: DownloaderSessionDelegate?
+    /// 代理
+    public weak var delegate: SessionDelegateProtocol?
     
-    public init(delegate: DownloaderSessionDelegate?) {
+    /// 初始化方法
+    ///
+    /// - Parameter delegate: 代理者
+    public init(delegate: SessionDelegateProtocol?) {
         self.delegate = delegate
         bufferData = NSMutableData()
         bufferDataQueue = DispatchQueue(label: "com.lostsakura.www.bufferDataQueue")

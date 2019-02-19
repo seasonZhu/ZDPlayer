@@ -29,7 +29,8 @@ class VerticalFullScreenPlayController: UIViewController {
         
         
         
-        localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "ad_douyin", ofType: "mp4")!)
+        //localURL = URL(fileURLWithPath: Bundle.main.path(forResource: "ad_douyin", ofType: "mp4")!)
+        localURL = URL(string: "https://video.golem.de/files/1/1/20637/wrkw0718-sd.mp4")!
         remoteURL = URL(string: "https://github.com/seasonZhu/ZDLaunchAdKit/blob/master/ZDLaunchAdDemo/Source/video1.mp4?raw=true")!
         let path = CacheManager.cacheFilePath(for: remoteURL)
         print(path)
