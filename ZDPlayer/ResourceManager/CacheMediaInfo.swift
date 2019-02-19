@@ -24,10 +24,10 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
     public var url: URL?
     
     /// 缓存段队列
-    private let cacheSegmentQueue = DispatchQueue(label: "com.lostsakura.www.CacheSegmentQueue")
+    private let cacheSegmentQueue: DispatchQueue
     
     /// 缓存下载信息队列
-    private let cacheDownloadInfoQueue = DispatchQueue(label: "com.lostsakura.www.CacheDownloadInfoQueue")
+    private let cacheDownloadInfoQueue: DispatchQueue
     
     /// 文件名
     private var fileName: String?
@@ -74,6 +74,12 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying {
             }
             downloadSpeed = Double(bytes) / 1024.0 / time
         }
+    }
+    
+    public override init() {
+        cacheSegmentQueue = DispatchQueue(label: "com.lostsakura.www.CacheSegmentQueue")
+        cacheDownloadInfoQueue = DispatchQueue(label: "com.lostsakura.www.CacheDownloadInfoQueue")
+        super.init()
     }
     
     /// NSCoding
