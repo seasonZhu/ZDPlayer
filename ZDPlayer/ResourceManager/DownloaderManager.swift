@@ -65,7 +65,6 @@ public protocol DownloaderManagerDelegate: class {
     func downloaderManager(_ downloaderManager: DownloaderManager, didFinishedWithError error: Error?)
 }
 
-
 extension DownloaderManagerDelegate {
     func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveResponse response: URLResponse) { }
     func downloaderManager(_ downloaderManager: DownloaderManager, didReceiveData data: Data, isLocal: Bool) { }
