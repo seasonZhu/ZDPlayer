@@ -48,6 +48,7 @@ public class CacheMedia: NSObject, NSCoding, Codable {
         }
     }
     
+    /// Codable
     required public init(from decoder: Decoder) {
         
     }

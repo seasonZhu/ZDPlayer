@@ -93,7 +93,7 @@ public class LoadingIndicator: UIView {
         animation.repeatCount = Float.infinity
         animation.isRemovedOnCompletion = false
         indicatorLayer.add(animation, forKey: kRotationAnimationKey)
-        isAnimating = true;
+        isAnimating = true
     }
     
     public func stopAnimating() {

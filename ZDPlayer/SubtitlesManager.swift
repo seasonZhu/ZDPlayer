@@ -8,7 +8,6 @@
 
 import Foundation
 
-// 字幕结构体
 /* srt 字幕
  1
  00:00:00,038 --> 00:00:02,064
@@ -22,6 +21,11 @@ import Foundation
  Dialogue: 0,0:01:04.50,0:01:06.64,Default,,0,0,0,,古巴  哈瓦那
  */
 
+/// 字幕类型
+///
+/// - unknown: 未知
+/// - srt: srt
+/// - ass: ass
 public enum SubtitlesFormat: String {
     case unknown = "unknown"
     case srt = "srt"
@@ -39,15 +43,28 @@ public enum SubtitlesFormat: String {
     }
 }
 
-/*
- str、ass、ssa格式都解析成 结构体  index标记  star字幕开始时间  end字幕结束时间  content字幕内容
- */
+/// 字幕
 public struct Subtitles {
+    
+    /// 标记
     public var index : Int
+    
+    /// 字幕开始时间
     public var start : TimeInterval
+    
+    /// 字幕结束时间
     public var end : TimeInterval
+    
+    /// 字幕内容
     public var content : String
     
+    /// 初始化方法
+    ///
+    /// - Parameters:
+    ///   - index: 标记
+    ///   - start: 字幕开始时间
+    ///   - end: 字幕结束时间
+    ///   - content: 字幕内容
     init(index: Int, start: TimeInterval, end: TimeInterval, content: String) {
         self.index = index
         self.start = start
@@ -62,12 +79,20 @@ extension Subtitles: CustomStringConvertible {
     }
 }
 
+/// 字幕管理器
 public class SubtitlesManager {
     
+    /// 字幕格式
     public private(set) var subtitlesFormat : SubtitlesFormat = .unknown
-    // 存放字幕的字典  时间戳key 字幕value
+    
+    /// 存放字幕的数组
     public private(set) var subtitlesGroups : [Subtitles] = []
     
+    /// 初始化方法
+    ///
+    /// - Parameters:
+    ///   - filePath: 字幕文件路径
+    ///   - encoding: 编码方式
     public init(filePath: URL, encoding: String.Encoding = String.Encoding.utf8) {
         
         do{
@@ -75,9 +100,15 @@ public class SubtitlesManager {
             let string = try String(contentsOf: filePath, encoding: encoding)
             subtitlesGroups = parseSubtitles(string)
         }
-        catch { }
+        catch {
+            
+        }
     }
     
+    /// 通过时间寻找字幕
+    ///
+    /// - Parameter time: 时间
+    /// - Returns: 字幕
     public func search(for time: TimeInterval) -> Subtitles? {
         var result : Subtitles?
         for group in subtitlesGroups {
@@ -90,10 +121,14 @@ public class SubtitlesManager {
     }
     
     
+    /// 格式化字幕
+    ///
+    /// - Parameter script: 台本
+    /// - Returns: 字幕数组
     private func parseSubtitles(_ script: String) -> [Subtitles]  {
         switch subtitlesFormat {
         case .srt:
-            return parseStrSubtitles(script) ?? []
+            return parseSrtSubtitles(script) ?? []
         case .ass:
             return parseAssSubtitles(script) ?? []
         default:
@@ -102,7 +137,11 @@ public class SubtitlesManager {
         
     }
     
-    private func parseStrSubtitles(_ script: String) -> [Subtitles]? {
+    /// 格式化srt字幕
+    ///
+    /// - Parameter script: 台本
+    /// - Returns: 字幕数组
+    private func parseSrtSubtitles(_ script: String) -> [Subtitles]? {
         var group: [Subtitles] = []
         let scanner = Scanner(string: script)
         while !scanner.isAtEnd {
@@ -136,6 +175,10 @@ public class SubtitlesManager {
         
     }
     
+    /// 格式化ass字幕
+    ///
+    /// - Parameter script: 台本
+    /// - Returns: 字幕数组
     private func parseAssSubtitles(_ script: String) -> [Subtitles]? {
         var groups: [Subtitles] = []
         let regxString = "Dialogue: [^,.]*[0-9]*,([1-9]?[0-9]*:[0-9]*:[0-9]*.[0-9]*),([1-9]?[0-9]*:[0-9]*:[0-9]*.[0-9]*),[^,.]*,[^,.]*,[0-9]*,[0-9]*,[0-9]*,[^,.]*,(.*)"
@@ -179,6 +222,10 @@ public class SubtitlesManager {
         }
     }
     
+    /// 格式化时间轴
+    ///
+    /// - Parameter timeString: 时间字符串
+    /// - Returns: 时间
     private func parseTime(_ timeString: String) -> TimeInterval {
         var h: TimeInterval = 0.0, m: TimeInterval = 0.0, s: TimeInterval = 0.0, c: TimeInterval = 0.0
         let scanner = Scanner(string: timeString)

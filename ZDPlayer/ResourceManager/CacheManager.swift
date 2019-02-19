@@ -8,9 +8,8 @@
 
 import Foundation
 
-/// 视频缓存管理器
+/// 视频缓存文件管理器
 public class CacheManager {
-    
     
     /// CacheConfigurationKey
     public static let CacheConfigurationKey = "CacheConfigurationKey"
