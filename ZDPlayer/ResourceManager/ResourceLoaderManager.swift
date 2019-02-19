@@ -75,6 +75,72 @@ public class ResourceLoaderManager: NSObject {
         
         return playerItem
     }
+    
+    public static func avURLAssetInfo(url: URL) -> ResourceInfo {
+        
+        var title: String?
+        var creator: String?
+        var author: String?
+        var artist: String?
+        var albumName: String?
+        var copyrights: String?
+        var artwork: UIImage?
+        
+        let urlAsset = AVURLAsset(url: url)
+        for format in urlAsset.availableMetadataFormats {
+            for metaData in urlAsset.metadata(forFormat: format) {
+                print(metaData.commonKey)
+                
+                // 音乐的标题
+                if metaData.commonKey == AVMetadataKey.commonKeyTitle {
+                    print("Title: \(metaData.value as? String)")
+                    title = metaData.value as? String
+                    
+                }
+                
+                // 音乐的创作者
+                if metaData.commonKey == AVMetadataKey.commonKeyCreator {
+                    print("Creator: \(metaData.value as? String)")
+                    creator = metaData.value as? String
+                }
+                
+                // 音乐的作者
+                if metaData.commonKey == AVMetadataKey.commonKeyAuthor {
+                    print("Author: \(metaData.value as? String)")
+                    author = metaData.value as? String
+                }
+                
+                // 音乐的艺术家
+                if metaData.commonKey == AVMetadataKey.commonKeyArtist {
+                    print("Artist: \(metaData.value as? String)")
+                    artist = metaData.value as? String
+                }
+                
+                // 音乐的专辑名称
+                if metaData.commonKey == AVMetadataKey.commonKeyAlbumName {
+                    print("AlbumName: \(metaData.value as? String)")
+                    albumName = metaData.value as? String
+                }
+                
+
+                // 音乐的版权
+                if metaData.commonKey == AVMetadataKey.commonKeyCopyrights {
+                    print("Copyrights: \(metaData.value as? String)")
+                    copyrights = metaData.value as? String
+                }
+                
+                // 音乐的图片信息
+                if metaData.commonKey == AVMetadataKey.commonKeyArtwork, let data = metaData.value as? Data {
+                    print("Artwork: \(metaData.dataType), \(data)")
+                    artwork = UIImage(data: data)
+                }
+            }
+        }
+        
+        let resourceInfo = ResourceInfo(title: title, creator: creator, author: author, artist: artist, albumName: albumName, copyrights: copyrights, artwork: artwork)
+        
+        return resourceInfo
+    }
 }
 
 extension ResourceLoaderManager {
@@ -146,5 +212,26 @@ extension ResourceLoaderManager: ResourceLoaderDelegate {
     public func resourceLoader(_ resourceLoader: ResourceLoader, didFailWithError error: Error?) {
         resourceLoader.cancel()
         delegate?.resourceLoaderManager(self, loadURL: resourceLoader.url, didFailWithError: error)
+    }
+}
+
+/// 资源的信息
+public struct ResourceInfo {
+    public let title: String?
+    public let creator: String?
+    public let author: String?
+    public let artist: String?
+    public let albumName: String?
+    public let copyrights: String?
+    public let artwork: UIImage?
+    
+    init(title: String?, creator: String?, author: String?, artist: String?, albumName: String?, copyrights: String?, artwork: UIImage?) {
+        self.title = title
+        self.creator = creator
+        self.author = author
+        self.artist = artist
+        self.albumName = albumName
+        self.copyrights = copyrights
+        self.artwork = artwork
     }
 }

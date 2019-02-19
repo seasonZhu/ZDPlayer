@@ -23,7 +23,7 @@ class Mp3PlayController: UIViewController {
         title = String(describing: type(of: self))
                 
         let url = URL(fileURLWithPath: Bundle.main.path(forResource: "saber", ofType: "mp3")!)
-        let mp3Info = getMp3Info(url: url)
+        let mp3Info = ResourceLoaderManager.avURLAssetInfo(url: url)
         
         let buttonItem = UIBarButtonItem.init(title: "切歌", style: .plain, target: self, action: #selector(changeMusic(_:)))
         navigationItem.rightBarButtonItem = buttonItem
@@ -33,8 +33,8 @@ class Mp3PlayController: UIViewController {
         player.loadVideo(url: url)
         player.backgroundMode = .suspend
         player.delegate = self
-        player.setVideoTitle(mp3Info.title)
-        player.playerView.layer.contents = mp3Info.image?.cgImage
+        player.setVideoTitle("\(mp3Info.albumName ?? "") \(mp3Info.title ?? "") \(mp3Info.artist ?? "")")
+        player.playerView.layer.contents = mp3Info.artwork?.cgImage
         player.playerView.layer.contentsGravity = .resizeAspect
         player.playerView.closeButton.isHidden = true
         player.playerView.snp.makeConstraints { (make) in
@@ -71,36 +71,11 @@ extension Mp3PlayController {
             url = URL(fileURLWithPath: Bundle.main.path(forResource: "music", ofType: "mp3")!)
         }
         
-        let mp3Info = getMp3Info(url: url)
+        let mp3Info = ResourceLoaderManager.avURLAssetInfo(url: url)
         player.loadVideo(url: url)
-        player.setVideoTitle(mp3Info.title)
-        player.playerView.layer.contents = mp3Info.image?.cgImage
+        player.setVideoTitle("\(mp3Info.albumName ?? "") \(mp3Info.title ?? "") \(mp3Info.artist ?? "")")
+        player.playerView.layer.contents = mp3Info.artwork?.cgImage
         player.play()
-    }
-    
-    
-    private func getMp3Info(url: URL) -> (title: String?, image: UIImage?) {
-        var title: String?
-        var coverImage: UIImage?
-        let urlAsset = AVURLAsset(url: url, options: nil)
-        for format in urlAsset.availableMetadataFormats {
-            for metaData in urlAsset.metadata(forFormat: format) {
-                print(metaData.commonKey)
-                // 这个是音乐的标题
-                if metaData.commonKey == AVMetadataKey.commonKeyTitle {
-                    title = metaData.value as? String
-                }
-                
-                // 这个是音乐里的图片信息
-                if metaData.commonKey == AVMetadataKey.commonKeyArtwork, let data = metaData.value as? Data {
-                    print(data)
-                    print(metaData.dataType)
-                    coverImage = UIImage(data: data)
-                }
-            }
-        }
-        
-        return (title, coverImage)
     }
 }
 
