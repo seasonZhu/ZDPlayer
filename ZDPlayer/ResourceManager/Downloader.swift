@@ -15,7 +15,7 @@ public protocol DownloaderDelegate: class {
     func downloader(_ downloader: Downloader, didFinishWithError error: Error?)
 }
 
-extension DownloaderDelegate {
+public extension DownloaderDelegate {
     func downloader(_ downloader: Downloader, didReceive response: URLResponse) {}
     func downloader(_ downloader: Downloader, didReceive data: Data, isLocal: Bool) {}
     func downloader(_ downloader: Downloader, didFinishWithError error: Error?) {}

@@ -120,6 +120,10 @@ extension NormalPlayController: ZDPlayerDelegate {
         print("ZDPlayerDelegate点击了关闭按钮")
     }
     
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressFullscreenButton button: UIButton) {
+        print("ZDPlayerDelegate点击了全屏按钮")
+    }
+    
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {
         isShowPlayControl ? print("ZDPlayerDelegate显示播放组件") : print("ZDPlayerDelegate隐藏播放组件")
     }

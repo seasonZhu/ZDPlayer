@@ -102,11 +102,12 @@ public protocol ZDPlayerDelegate: class {
     
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, willFullscreen isFullscreen: Bool)
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressCloseButton button: UIButton)
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressFullscreenButton button: UIButton)
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool)
 }
 
 // MARK: - ZDPlayer的代理的默认实现
-extension ZDPlayerDelegate {
+public extension ZDPlayerDelegate {
     func player(_ player: ZDPlayer, stateDidChange state: PlayState) {}
     func player(_ player: ZDPlayer, playerDurationDidChange currentDuration: TimeInterval, totalDuration: TimeInterval) {}
     func player(_ player: ZDPlayer, bufferStateDidChange state: BufferState) {}
@@ -115,6 +116,7 @@ extension ZDPlayerDelegate {
     
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {}
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressCloseButton button: UIButton) {}
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressFullscreenButton button: UIButton) {}
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {}
 }
 
@@ -478,10 +480,8 @@ extension ZDPlayer {
         switch backgroundMode {
         case .suspend:
             pause()
-        case .autoPlayAndPaused:
+        case .autoPlayAndPaused, .proceed:
             play()
-        case .proceed:
-            break
         }
     }
     
@@ -573,6 +573,10 @@ extension ZDPlayer: ZDPlayerViewDelegate {
 
     public func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {
         delegate?.player(self, playerView: playerView, didPressCloseButton: button)
+    }
+    
+    public func playerView(_ playerView: ZDPlayerView, didPressFullscreenButton button: UIButton) {
+        delegate?.player(self, playerView: playerView, didPressFullscreenButton: button)
     }
 
     public func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {

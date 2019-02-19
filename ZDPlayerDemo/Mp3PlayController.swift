@@ -31,7 +31,7 @@ class Mp3PlayController: UIViewController {
         view.addSubview(player.playerView)
         
         player.loadVideo(url: url)
-        player.backgroundMode = .suspend
+        player.backgroundMode = .proceed
         player.delegate = self
         player.setVideoTitle("\(mp3Info.albumName ?? "") \(mp3Info.title ?? "") \(mp3Info.artist ?? "")")
         player.playerView.layer.contents = mp3Info.artwork?.cgImage

@@ -12,7 +12,6 @@ import SnapKit
 
 class EmbedTableViewController: UITableViewController {
     
-    
     var player: ZDPlayer!
     var playerView: EmbedPlayerView!
     var currentPlayIndexPath : IndexPath?
@@ -29,12 +28,17 @@ class EmbedTableViewController: UITableViewController {
         addTableViewObserver()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        forceOrientationPortrait()
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         smallScreenView?.removeFromSuperview()
         playerView?.removeFromSuperview()
         player?.clearPlayer()
         currentPlayIndexPath = nil
+        forceOrientationAll()
     }
     
     deinit {
@@ -89,6 +93,7 @@ class EmbedTableViewController: UITableViewController {
         playerView = EmbedPlayerView()
         player = ZDPlayer(playerView: playerView)
         player.backgroundMode = .suspend
+        player.delegate = self
         
         cell.contentView.addSubview(player.playerView)
         player.playerView.snp.makeConstraints { (make) in
@@ -225,5 +230,63 @@ extension EmbedTableViewController {
                 }
             }
         }
+    }
+}
+
+extension EmbedTableViewController: ZDPlayerDelegate {
+    func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressFullscreenButton button: UIButton) {
+        if button.isSelected {
+            forceOrientationLandscape()
+            print("进入全屏")
+        }else {
+            forceOrientationPortrait()
+            print("退出全屏")
+        }
+    }
+}
+
+extension EmbedTableViewController {
+    override var shouldAutorotate: Bool {
+            return false
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+            return [.portrait]
+    }
+    
+    // 强制旋转横屏
+    func forceOrientationLandscape() {
+        let appdelegate = UIApplication.shared.delegate as! AppDelegate
+        appdelegate.isForceLandscape = true
+        appdelegate.isForcePortrait = false
+        appdelegate.isForceAllDerictions = false
+        _ = appdelegate.application(UIApplication.shared, supportedInterfaceOrientationsFor: view.window)
+        // 设置屏幕为横屏
+        UIDevice.current.setValue(UIDeviceOrientation.landscapeLeft.rawValue, forKey: #keyPath(UIDevice.orientation))
+        UIViewController.attemptRotationToDeviceOrientation()
+    }
+    
+    // 强制旋转竖屏
+    func forceOrientationPortrait() {
+        let appdelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
+        appdelegate.isForceLandscape = false
+        appdelegate.isForcePortrait = true
+        appdelegate.isForceAllDerictions = false
+        _ = appdelegate.application(UIApplication.shared, supportedInterfaceOrientationsFor: view.window)
+        // 设置屏幕为竖屏
+        UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: #keyPath(UIDevice.orientation))
+        UIViewController.attemptRotationToDeviceOrientation()
+    }
+    
+    // 强制旋转横屏
+    func forceOrientationAll() {
+        let appdelegate = UIApplication.shared.delegate as! AppDelegate
+        appdelegate.isForceLandscape = false
+        appdelegate.isForcePortrait = false
+        appdelegate.isForceAllDerictions = true
+        _ = appdelegate.application(UIApplication.shared, supportedInterfaceOrientationsFor: view.window)
+        // 设置屏幕为竖屏
+        UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: #keyPath(UIDevice.orientation))
+        UIViewController.attemptRotationToDeviceOrientation()
     }
 }

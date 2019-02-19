@@ -13,7 +13,10 @@ import AVFoundation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
+    var isForceLandscape = false
+    var isForcePortrait = false
+    var isForceAllDerictions = true //支持所有方向
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -52,3 +55,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+// MARK: - 涉及横竖的操作
+extension AppDelegate {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        if isForceAllDerictions {
+            return .all
+        } else if isForceLandscape {
+            return .landscape
+        } else if isForcePortrait {
+            return .portrait
+        }
+        return .portrait
+    }
+}

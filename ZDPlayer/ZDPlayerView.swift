@@ -15,15 +15,19 @@ public protocol ZDPlayerViewDelegate: class {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool)
     
     func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton)
+    
+    func playerView(_ playerView: ZDPlayerView, didPressFullscreenButton button: UIButton)
 
     func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayerControl: Bool)
 }
 
 // MARK: - ZDPlayerView的代理的默认实现
-extension ZDPlayerViewDelegate {
+public extension ZDPlayerViewDelegate {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {}
     
     func playerView(_ playerView: ZDPlayerView, didPressCloseButton button: UIButton) {}
+    
+    func playerView(_ playerView: ZDPlayerView, didPressFullscreenButton button: UIButton) {}
     
     func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayerControl: Bool) {}
 }
@@ -700,6 +704,7 @@ extension ZDPlayerView {
         button.isSelected = !button.isSelected
         isFullScreen = button.isSelected
         isFullScreen ? enterFullScreen() : exitFullscreen()
+        delegate?.playerView(self, didPressFullscreenButton: button)
     }
     
     /// 静音按钮的点击事件
