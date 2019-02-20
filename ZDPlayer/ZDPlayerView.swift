@@ -216,7 +216,7 @@ open class ZDPlayerView: UIView {
     private var viewFrame = CGRect.zero
     
     /// 记录上一次的手机方位
-    private var lastOrientation: UIDeviceOrientation?
+    private var lastOrientation: UIInterfaceOrientation?
     
     /// 记录上一次的手机声音值
     private var lastSoundValue: Float = 0
@@ -226,7 +226,7 @@ open class ZDPlayerView: UIView {
     /// - Parameter frame: frame
     public override init(frame: CGRect) {
         playerLayer = AVPlayerLayer(player: nil)
-        lastOrientation = UIDevice.current.orientation
+        lastOrientation = UIApplication.shared.statusBarOrientation
         super.init(frame: frame)
         addDeviceOrientationNotification()
         addGestureRecognizer()
@@ -487,21 +487,27 @@ extension ZDPlayerView {
     
     /// 添加设备方向变化的通知
     func addDeviceOrientationNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationWillChange(_:)), name: UIApplication.willChangeStatusBarOrientationNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(statusBarOrientationWillChange(_:)), name: UIApplication.willChangeStatusBarOrientationNotification, object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(statusBarOrientationDidChange(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
     }
     
     /// 设备方向即将变化的通知具体实现
     ///
     /// - Parameter notification: 通知
     @objc
-    func deviceOrientationWillChange(_ notification: Notification) {
+    func statusBarOrientationWillChange(_ notification: Notification) {
+        
+        //  这个两个状态太过于相似都是不知道用什么好, 使用这个什么通知 那什么对应的值 另外 第一次拿UIDevice.current.orientation一般都会是unknown,但是UIDevice.current.orientation会有值
+        
+        //  设备方向
+        let device = UIDevice.current.orientation
+        //  界面方向
+        let ui = UIApplication.shared.statusBarOrientation
         
         //  这里是为了记录非全屏状态下的frame和superview,便于从全屏退回的时候保持原来的状态
-        
         if let userInfo = notification.userInfo, let number = userInfo[UIApplication.statusBarOrientationUserInfoKey] as? Int {
-            let newOrientation = UIDeviceOrientation(rawValue: number)
+            let newOrientation = UIInterfaceOrientation(rawValue: number)
             if (lastOrientation == .portrait || lastOrientation == .unknown || lastOrientation == .portraitUpsideDown)
                 && (newOrientation == .landscapeLeft || newOrientation == .landscapeRight) {
                 parentView = superview
@@ -517,13 +523,13 @@ extension ZDPlayerView {
     ///
     /// - Parameter notification: 通知
     @objc
-    func deviceOrientationDidChange(_ notification: Notification) {
-        let orientation = UIDevice.current.orientation
+    func statusBarOrientationDidChange(_ notification: Notification) {
+        let orientation = UIApplication.shared.statusBarOrientation
         switch orientation {
         case .landscapeLeft, .landscapeRight:
-            onDeviceOrientation(isFullScreen: true, orientation: orientation)
+            onStatusBarOrientation(isFullScreen: true, orientation: orientation)
         case .portrait, .portraitUpsideDown:
-            onDeviceOrientation(isFullScreen: false, orientation: orientation)
+            onStatusBarOrientation(isFullScreen: false, orientation: orientation)
         default:
             break
         }
@@ -534,7 +540,7 @@ extension ZDPlayerView {
     /// - Parameters:
     ///   - fullScreen: 是否全屏
     ///   - orientation: 设备方向
-    func onDeviceOrientation(isFullScreen: Bool, orientation: UIDeviceOrientation) {
+    func onStatusBarOrientation(isFullScreen: Bool, orientation: UIInterfaceOrientation) {
         if orientation == .landscapeLeft || orientation == .landscapeRight {
             let rectInWindow = convert(bounds, to: UIApplication.shared.keyWindow)
             frame = rectInWindow

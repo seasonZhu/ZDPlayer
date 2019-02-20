@@ -70,7 +70,6 @@ public class BrightnessView: UIView {
     //MARK: - layoutSubviews
     public override func layoutSubviews() {
         super.layoutSubviews()
-
         let orientation = UIApplication.shared.statusBarOrientation
         switch orientation {
         case .portrait, .portraitUpsideDown:
@@ -178,7 +177,7 @@ public class BrightnessView: UIView {
 // MARK: - 添加观察状态栏改变的通知
 extension BrightnessView {
     func addStatusBarNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.statusBarOrientationNotification(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(statusBarOrientationNotification(_:)), name: UIApplication.didChangeStatusBarOrientationNotification, object: nil)
     }
     
     @objc
