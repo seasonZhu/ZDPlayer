@@ -21,7 +21,7 @@ public protocol ZDPlayerViewDelegate: class {
     func playerView(_ playerView: ZDPlayerView, showPlayerControl isShowPlayerControl: Bool)
 }
 
-// MARK: - ZDPlayerView的代理的默认实现
+// MARK: - ZDPlayerView的代理的默认实现 注意的是对于这种带有public的协议可选, 其extension也是public修饰
 public extension ZDPlayerViewDelegate {
     func playerView(_ playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {}
     

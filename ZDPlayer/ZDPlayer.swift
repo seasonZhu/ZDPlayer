@@ -216,7 +216,7 @@ public class ZDPlayer: NSObject {
     /// - Parameters:
     ///   - url: 播放地址
     ///   - playerView: 播放层
-    public init(url: URL?, playerView: ZDPlayerView?) {
+    public init(url: URL? = nil, playerView: ZDPlayerView? = nil) {
         mediaFormat = MediaFormat.analyzeVideoFormat(url: url)
         resourceLoaderManager = ResourceLoaderManager()
         contentURL = url
@@ -233,22 +233,8 @@ public class ZDPlayer: NSObject {
     }
     
     /// 便利构造方法
-    ///
-    /// - Parameter url: 播放地址
-    public convenience init(url: URL) {
-        self.init(url: url, playerView: nil)
-    }
-    
-    /// 便利构造方法
-    ///
-    /// - Parameter playerView: 播放层
-    public convenience init(playerView: ZDPlayerView) {
-        self.init(url: nil, playerView: playerView)
-    }
-    
-    /// 便利构造方法
     public convenience override init() {
-        self.init(url: nil, playerView: nil)
+        self.init()
     }
     
     /// 析构函数

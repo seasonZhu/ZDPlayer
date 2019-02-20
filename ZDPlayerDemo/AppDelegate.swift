@@ -13,10 +13,6 @@ import AVFoundation
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    
-    var isForceLandscape = false
-    var isForcePortrait = false
-    var isForceAllDerictions = true //支持所有方向
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -51,18 +47,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 // MARK: - 涉及横竖的操作
 extension AppDelegate {
+    
+    struct DerictionAction {
+        static var isForceLandscape = false
+        static var isForcePortrait = false
+        static var isForceAll = true
+    }
+    
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
-        if isForceAllDerictions {
+        if DerictionAction.isForceAll {
             return .all
-        } else if isForceLandscape {
+        } else if DerictionAction.isForceLandscape {
             return .landscape
-        } else if isForcePortrait {
+        } else if DerictionAction.isForcePortrait {
             return .portrait
         }
         return .portrait
     }
 }
 
+// MARK: - 后台播放的设置
 extension AppDelegate {
     func playingBackground() {
         let session = AVAudioSession.sharedInstance()

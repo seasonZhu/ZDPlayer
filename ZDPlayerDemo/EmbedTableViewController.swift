@@ -257,9 +257,9 @@ extension EmbedTableViewController {
     // 强制旋转横屏
     func forceOrientationLandscape() {
         let appdelegate = UIApplication.shared.delegate as! AppDelegate
-        appdelegate.isForceLandscape = true
-        appdelegate.isForcePortrait = false
-        appdelegate.isForceAllDerictions = false
+        AppDelegate.DerictionAction.isForceLandscape = true
+        AppDelegate.DerictionAction.isForcePortrait = false
+        AppDelegate.DerictionAction.isForceAll = false
         _ = appdelegate.application(UIApplication.shared, supportedInterfaceOrientationsFor: view.window)
         // 设置屏幕为横屏
         UIDevice.current.setValue(UIDeviceOrientation.landscapeLeft.rawValue, forKey: #keyPath(UIDevice.orientation))
@@ -269,9 +269,9 @@ extension EmbedTableViewController {
     // 强制旋转竖屏
     func forceOrientationPortrait() {
         let appdelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
-        appdelegate.isForceLandscape = false
-        appdelegate.isForcePortrait = true
-        appdelegate.isForceAllDerictions = false
+        AppDelegate.DerictionAction.isForceLandscape = false
+        AppDelegate.DerictionAction.isForcePortrait = true
+        AppDelegate.DerictionAction.isForceAll = false
         _ = appdelegate.application(UIApplication.shared, supportedInterfaceOrientationsFor: view.window)
         // 设置屏幕为竖屏
         UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: #keyPath(UIDevice.orientation))
@@ -281,9 +281,9 @@ extension EmbedTableViewController {
     // 强制旋转横屏
     func forceOrientationAll() {
         let appdelegate = UIApplication.shared.delegate as! AppDelegate
-        appdelegate.isForceLandscape = false
-        appdelegate.isForcePortrait = false
-        appdelegate.isForceAllDerictions = true
+        AppDelegate.DerictionAction.isForceLandscape  = false
+        AppDelegate.DerictionAction.isForcePortrait = false
+        AppDelegate.DerictionAction.isForceAll = true
         _ = appdelegate.application(UIApplication.shared, supportedInterfaceOrientationsFor: view.window)
         // 设置屏幕为竖屏
         UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: #keyPath(UIDevice.orientation))

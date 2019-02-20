@@ -120,7 +120,6 @@ public class SubtitlesManager {
         return result
     }
     
-    
     /// 格式化字幕
     ///
     /// - Parameter script: 台本

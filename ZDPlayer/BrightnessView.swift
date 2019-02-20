@@ -16,8 +16,6 @@ public class BrightnessView: UIView {
      */
     
     /// 单例
-    private static var _share: BrightnessView?
-    
     public static func instance() -> BrightnessView {
         guard  let share = _share else {
             _share = BrightnessView()
@@ -29,6 +27,8 @@ public class BrightnessView: UIView {
     public static func destoryInstance() {
         _share = nil
     }
+    
+    private static var _share: BrightnessView?
     
     //MARK:- 私有属性
     private lazy var backImage: UIImageView = {
@@ -70,9 +70,9 @@ public class BrightnessView: UIView {
     //MARK: - layoutSubviews
     public override func layoutSubviews() {
         super.layoutSubviews()
-        //InterfaceOrientation值
-        let currInterfaceOrientation: UIInterfaceOrientation = UIApplication.shared.statusBarOrientation
-        switch currInterfaceOrientation {
+        
+        let orientation = UIDevice.current.orientation
+        switch orientation {
         case .portrait, .portraitUpsideDown:
             center = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: (UIScreen.main.bounds.height - 10) * 0.5)
         case .landscapeLeft, .landscapeRight:
@@ -110,7 +110,7 @@ public class BrightnessView: UIView {
         
         setUpTips()
         addStatusBarNotification()
-        addKVOObserver()
+        addBrightnessObserver()
         
         alpha = 0.0
     }
@@ -189,7 +189,7 @@ extension BrightnessView {
 
 // MARK: - 添加KVO关于亮度的观察
 extension BrightnessView {
-    func addKVOObserver() {
+    func addBrightnessObserver() {
         UIScreen.main.addObserver(self, forKeyPath: #keyPath(UIScreen.brightness), options: [.new, .initial], context: nil)
     }
     
