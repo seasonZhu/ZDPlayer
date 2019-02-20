@@ -11,7 +11,7 @@ import ZDPlayer
 
 class ViewController: UIViewController {
     
-    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayController", "Mp3PlayController", "EmbedTableViewController"]
+    let dataSource = ["NormalPlayController", "VerticalFullScreenPlayController", "LyricsPlayController", "Mp3PlayController",  "EmbedTableViewController", "Cache"]
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds, style: .plain)
@@ -60,6 +60,11 @@ extension ViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
         cell.textLabel?.text = dataSource[indexPath.row]
         cell.accessoryType = .disclosureIndicator
+        if indexPath.row == dataSource.count - 1 {
+            CacheManager.share.calculateDiskCacheSize { (size) in
+                cell.textLabel?.text = "\(Double(size) / 1024.0 / 1024.0)" + "MB"
+            }
+        }
         return cell
     }
     
@@ -77,8 +82,11 @@ extension ViewController: UITableViewDelegate {
             navigationController?.pushViewController(LyricsPlayerController(), animated: true)
         case 3:
             navigationController?.pushViewController(Mp3PlayController(), animated: true)
-        default:
+        case 4:
             navigationController?.pushViewController(EmbedTableViewController(), animated: true)
+        default:
+            CacheManager.share.clearAllCache()
+            tableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
 }

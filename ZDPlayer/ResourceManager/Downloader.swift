@@ -120,7 +120,8 @@ extension Downloader {
                 
                 startOffset = action.range.location
                 task = session?.dataTask(with: request)
-                //session?.downloadTask(with: request).resume()
+                // 不能使用下载请求 因为这个不是一个完整的下载
+                // session?.downloadTask(with: request).resume()
                 task?.resume()
             }
         }else {
