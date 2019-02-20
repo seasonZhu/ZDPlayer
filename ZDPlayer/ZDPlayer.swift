@@ -232,11 +232,6 @@ public class ZDPlayer: NSObject {
         }
     }
     
-    /// 便利构造方法
-    public convenience override init() {
-        self.init()
-    }
-    
     /// 析构函数
     deinit {
         print("ZDPlayer销毁了")

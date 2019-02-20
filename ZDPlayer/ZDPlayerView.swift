@@ -233,6 +233,7 @@ open class ZDPlayerView: UIView {
         getVolumeSlider()
         getBrightnessSlider()
         setUpUI()
+        //setUpUIBySystem_iOS9()
     }
     
     /// 便利构造函数
@@ -648,7 +649,7 @@ extension ZDPlayerView {
         
         bottomView.addSubview(fullscreenButton)
         fullscreenButton.snp.makeConstraints { (make) in
-            make.centerY.equalTo(playButton)
+            make.centerY.equalTo(bottomView)
             make.right.equalTo(bottomView).offset(-10)
             make.height.equalTo(30)
             make.width.equalTo(30)
@@ -657,7 +658,7 @@ extension ZDPlayerView {
         bottomView.addSubview(timeLabel)
         timeLabel.snp.makeConstraints { (make) in
             make.right.equalTo(fullscreenButton.snp.left).offset(-10)
-            make.centerY.equalTo(playButton)
+            make.centerY.equalTo(bottomView)
             make.height.equalTo(30)
         }
         
@@ -920,5 +921,108 @@ extension ZDPlayerView: UIGestureRecognizerDelegate {
             return true
         }
         return false
+    }
+}
+
+// MARK: - iOS9.0之后的系统布局
+extension ZDPlayerView {
+    func setUpUIBySystem_iOS9() {
+        backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        setUpTopViewBySystem_iOS9()
+        setUpMiddelViewBySystem_iOS9()
+        setUpBottomViewBySystem_iOS9()
+    }
+    
+    
+    /// 上布局
+    func setUpTopViewBySystem_iOS9() {
+        addSubview(topView)
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        topView.leftAnchor.constraint(equalTo: leftAnchor).setIsActive(true)
+        topView.rightAnchor.constraint(equalTo: rightAnchor).setIsActive(true)
+        topView.topAnchor.constraint(equalTo: topAnchor).setIsActive(true)
+        topView.heightAnchor.constraint(equalToConstant: 44).setIsActive(true)
+        
+        topView.addSubview(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        closeButton.leftAnchor.constraint(equalTo: topView.leftAnchor).setIsActive(true)
+        closeButton.centerYAnchor.constraint(equalTo: topView.centerYAnchor).setIsActive(true)
+        closeButton.heightAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        closeButton.widthAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        
+        topView.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        titleLabel.leftAnchor.constraint(equalTo: closeButton.rightAnchor).setIsActive(true)
+        titleLabel.rightAnchor.constraint(equalTo: topView.rightAnchor, constant: -30).setIsActive(true)
+        titleLabel.heightAnchor.constraint(equalToConstant: 44).setIsActive(true)
+        titleLabel.widthAnchor.constraint(equalToConstant: bounds.width - 60).setIsActive(true)
+    }
+    
+    /// 中布局
+    func setUpMiddelViewBySystem_iOS9() {
+        addSubview(replayButton)
+        replayButton.translatesAutoresizingMaskIntoConstraints = false
+        replayButton.centerXAnchor.constraint(equalTo: centerXAnchor).setIsActive(true)
+        replayButton.centerYAnchor.constraint(equalTo: centerYAnchor).setIsActive(true)
+        replayButton.heightAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        replayButton.widthAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        
+        addSubview(loadingIndicator)
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).setIsActive(true)
+        loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).setIsActive(true)
+        loadingIndicator.heightAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        loadingIndicator.widthAnchor.constraint(equalToConstant: 30).setIsActive(true)
+    }
+    
+    /// 下布局
+    func setUpBottomViewBySystem_iOS9() {
+        addSubview(bottomView)
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        bottomView.leftAnchor.constraint(equalTo: leftAnchor).setIsActive(true)
+        bottomView.rightAnchor.constraint(equalTo: rightAnchor).setIsActive(true)
+        bottomView.bottomAnchor.constraint(equalTo: bottomAnchor).setIsActive(true)
+        bottomView.heightAnchor.constraint(equalToConstant: 44).setIsActive(true)
+        bottomView.widthAnchor.constraint(equalToConstant: bounds.width).setIsActive(true)
+        
+        bottomView.addSubview(playButton)
+        playButton.translatesAutoresizingMaskIntoConstraints = false
+        playButton.leftAnchor.constraint(equalTo: bottomView.leftAnchor, constant: 20).setIsActive(true)
+        playButton.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).setIsActive(true)
+        playButton.heightAnchor.constraint(equalToConstant: 25).setIsActive(true)
+        playButton.widthAnchor.constraint(equalToConstant: 25).setIsActive(true)
+        
+        bottomView.addSubview(soundButton)
+        soundButton.translatesAutoresizingMaskIntoConstraints = false
+        soundButton.leftAnchor.constraint(equalTo: playButton.rightAnchor, constant: 20).setIsActive(true)
+        soundButton.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).setIsActive(true)
+        soundButton.heightAnchor.constraint(equalToConstant: 25).setIsActive(true)
+        soundButton.widthAnchor.constraint(equalToConstant: 25).setIsActive(true)
+        
+        bottomView.addSubview(fullscreenButton)
+        fullscreenButton.translatesAutoresizingMaskIntoConstraints = false
+        fullscreenButton.rightAnchor.constraint(equalTo: bottomView.rightAnchor, constant: -10).setIsActive(true)
+        fullscreenButton.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).setIsActive(true)
+        fullscreenButton.heightAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        fullscreenButton.widthAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        
+        bottomView.addSubview(timeLabel)
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        timeLabel.rightAnchor.constraint(equalTo: fullscreenButton.leftAnchor, constant: -10).setIsActive(true)
+        timeLabel.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).setIsActive(true)
+        timeLabel.heightAnchor.constraint(equalToConstant: 30).setIsActive(true)
+        
+        bottomView.addSubview(timeSlider)
+        timeSlider.translatesAutoresizingMaskIntoConstraints = false
+        timeSlider.rightAnchor.constraint(equalTo: timeLabel.leftAnchor, constant: -10).setIsActive(true)
+        timeSlider.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).setIsActive(true)
+        timeSlider.leftAnchor.constraint(equalTo: soundButton.rightAnchor, constant: 25).setIsActive(true)
+        timeSlider.heightAnchor.constraint(equalToConstant: 25).setIsActive(true)
+    }
+}
+
+extension NSLayoutConstraint {
+    func setIsActive(_ isActive: Bool) {
+        self.isActive = isActive
     }
 }

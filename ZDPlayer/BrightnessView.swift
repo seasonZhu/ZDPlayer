@@ -70,8 +70,8 @@ public class BrightnessView: UIView {
     //MARK: - layoutSubviews
     public override func layoutSubviews() {
         super.layoutSubviews()
-        
-        let orientation = UIDevice.current.orientation
+
+        let orientation = UIApplication.shared.statusBarOrientation
         switch orientation {
         case .portrait, .portraitUpsideDown:
             center = CGPoint(x: UIScreen.main.bounds.width * 0.5, y: (UIScreen.main.bounds.height - 10) * 0.5)
