@@ -20,13 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        do {
-            try AVAudioSession.sharedInstance().setCategory(AVAudioSession.Category.playback, mode: .default, options: [])
-        } catch let error {
-            print(error)
-        }
-        
+        playingBackground()
         return true
     }
 
@@ -66,5 +60,14 @@ extension AppDelegate {
             return .portrait
         }
         return .portrait
+    }
+}
+
+extension AppDelegate {
+    func playingBackground() {
+        let session = AVAudioSession.sharedInstance()
+        try? session.setCategory(.playback, mode: .default, options: .allowAirPlay)
+        //try? session.setCategory(AVAudioSessionCategoryPlayback)
+        try? session.setActive(true)
     }
 }

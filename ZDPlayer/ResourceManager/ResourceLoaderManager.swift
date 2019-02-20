@@ -87,8 +87,9 @@ extension ResourceLoaderManager {
         public let albumName: String?
         public let copyrights: String?
         public let artwork: UIImage?
+        public let duration: TimeInterval
         
-        public init(title: String?, creator: String?, author: String?, artist: String?, albumName: String?, copyrights: String?, artwork: UIImage?) {
+        public init(title: String?, creator: String?, author: String?, artist: String?, albumName: String?, copyrights: String?, artwork: UIImage?, duration: TimeInterval) {
             self.title = title
             self.creator = creator
             self.author = author
@@ -96,6 +97,7 @@ extension ResourceLoaderManager {
             self.albumName = albumName
             self.copyrights = copyrights
             self.artwork = artwork
+            self.duration = duration
         }
     }
     
@@ -162,7 +164,7 @@ extension ResourceLoaderManager {
             }
         }
         
-        let resourceInfo = ResourceInfo(title: title, creator: creator, author: author, artist: artist, albumName: albumName, copyrights: copyrights, artwork: artwork)
+        let resourceInfo = ResourceInfo(title: title, creator: creator, author: author, artist: artist, albumName: albumName, copyrights: copyrights, artwork: artwork, duration: urlAsset.duration.seconds)
         
         return resourceInfo
     }
