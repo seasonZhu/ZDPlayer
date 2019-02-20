@@ -24,7 +24,7 @@ public class ResourceLoadingRequest {
     public weak var delegate: ResourceLoadingRequestDelegate?
     
     /// 下载器
-    private let downloader: DownloaderManager
+    private let downloaderManager: DownloaderManager
     
     /// 取消错误
     private var cancelledError: Error {
@@ -37,10 +37,10 @@ public class ResourceLoadingRequest {
     /// - Parameters:
     ///   - downloader: 下载器
     ///   - request: 资源请求
-    init(downloader: DownloaderManager, request: AVAssetResourceLoadingRequest) {
+    init(downloaderManager: DownloaderManager, request: AVAssetResourceLoadingRequest) {
         self.request = request
-        self.downloader = downloader
-        downloader.delegate = self
+        self.downloaderManager = downloaderManager
+        downloaderManager.delegate = self
         setCacheMediaToAVAssetResourceLoadingRequest()
     }
     
@@ -61,7 +61,7 @@ public class ResourceLoadingRequest {
                 isEnd = true
             }
         }
-        downloader.downloaderTask(fromOffset: offset, length: length, isEnd: isEnd)
+        downloaderManager.downloaderTask(fromOffset: offset, length: length, isEnd: isEnd)
     }
     
     /// 结束资源请求
@@ -71,9 +71,9 @@ public class ResourceLoadingRequest {
         }
     }
     
-    /// 取消资源情趣
+    /// 取消资源请求
     public func cancel() {
-        downloader.cancel()
+        downloaderManager.cancel()
     }
 }
 
@@ -81,8 +81,8 @@ extension ResourceLoadingRequest {
     
     /// set CacheMedia to request
     func setCacheMediaToAVAssetResourceLoadingRequest() {
-        if let cacheMedia = downloader.cacheMedia {
-            request.contentInformationRequest?.contentType = cacheMedia.contentType
+        request.contentInformationRequest?.contentType = downloaderManager.cacheMedia?.contentType
+        if let cacheMedia = downloaderManager.cacheMedia {
             request.contentInformationRequest?.contentLength = cacheMedia.contentLength
             request.contentInformationRequest?.isByteRangeAccessSupported = cacheMedia.isByteRangeAccessSupported
         }

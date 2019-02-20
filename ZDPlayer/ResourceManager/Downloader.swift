@@ -43,16 +43,16 @@ public class Downloader {
     public private(set) var sessionDelegate: SessionDelegate?
     
     /// 开始时的偏移
-    public private(set) var startOffset: Int = 0
+    public private(set) var startOffset = 0
     
     /// 下载工作器的代理
     public weak var delegate: DownloaderDelegate?
     
     /// 是否取消
-    private var isCanceled: Bool = false
+    private var isCanceled = false
     
     /// 通知时间
-    private var notifyTime = 0.0
+    private var notifyTime: TimeInterval = 0.0
     
     /// 初始化方法
     ///
@@ -103,9 +103,10 @@ extension Downloader {
             case .local:
                 if let data = cacheMediaWorker.readCache(forRange: action.range) {
                     delegate?.downloader(self, didReceive: data, isLocal: true)
+                    // 递归
                     processAction()
                 }else {
-                    let error = NSError(domain: "com.lostsakura.www.Downloader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Read cache data failed."])
+                    let error = NSError(domain: "com.lostsakura.www.Downloader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Read local cache data failed."])
                     delegate?.downloader(self, didFinishWithError: error as Error)
                 }
             case .remote:
@@ -119,6 +120,7 @@ extension Downloader {
                 
                 startOffset = action.range.location
                 task = session?.dataTask(with: request)
+                //session?.downloadTask(with: request).resume()
                 task?.resume()
             }
         }else {
@@ -136,7 +138,7 @@ extension Downloader {
         let interval = CacheManager.mediaCacheNotifyInterval
         if notifyTime < currentTime - interval || isFlush {
             if let mediaInfo = cacheMediaWorker.mediaInfo?.copy() as? CacheMediaInfo {
-                let userInfo = [CacheManager.CacheConfigurationKey: mediaInfo]
+                let userInfo = [CacheManager.CacheMediaInfoKey: mediaInfo]
                 NotificationCenter.default.post(name: .CacheManagerDidUpdateCache, object: self, userInfo: userInfo)
                 
                 if isFinished && mediaInfo.progress >= 1.0 {
@@ -150,8 +152,8 @@ extension Downloader {
     ///
     /// - Parameter error: Error
     func notify(downloadFinishWithError error: Error?) {
-        if let configuration = cacheMediaWorker.mediaInfo?.copy() {
-            var userInfo = [CacheManager.CacheConfigurationKey: configuration]
+        if let mediaInfo = cacheMediaWorker.mediaInfo?.copy() {
+            var userInfo = [CacheManager.CacheMediaInfoKey: mediaInfo]
             if let error = error {
                 userInfo.updateValue(error, forKey: CacheManager.CacheErrorKey)
             }
@@ -204,6 +206,7 @@ extension Downloader: SessionDelegateProtocol {
             notify(downloadFinishWithError: error)
         }else {
             notify(downloadProgressWithFlush: true, isFinished: true)
+            // 递归
             processAction()
         }
     }

@@ -11,8 +11,8 @@ import Foundation
 /// 视频缓存文件管理器
 public class CacheManager {
     
-    /// CacheConfigurationKey
-    public static let CacheConfigurationKey = "CacheConfigurationKey"
+    /// CacheMediaInfoKey
+    public static let CacheMediaInfoKey = "CacheMediaInfoKey"
     
     /// CacheErrorKey
     public static let CacheErrorKey = "CacheErrorKey"

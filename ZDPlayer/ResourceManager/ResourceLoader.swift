@@ -24,7 +24,7 @@ public class ResourceLoader {
     public weak var delegate: ResourceLoaderDelegate?
     
     /// 下载器
-    private let downloader: DownloaderManager
+    private let downloaderManager: DownloaderManager
     
     /// 资源请求队列
     private var pendingRequestWorkers = [String: ResourceLoadingRequest]()
@@ -37,7 +37,7 @@ public class ResourceLoader {
     /// - Parameter url: 资源网址
     init(url: URL) {
         self.url = url
-        downloader = DownloaderManager(url: url)
+        downloaderManager = DownloaderManager(url: url)
     }
     
     /// 添加资源请求
@@ -57,19 +57,19 @@ public class ResourceLoader {
     /// - Parameter request: 资源请求
     public func remove(request: AVAssetResourceLoadingRequest) {
         let k = key(forRequest: request)
-        let loadingRequest = ResourceLoadingRequest(downloader: downloader, request: request)
+        let loadingRequest = pendingRequestWorkers[k] ?? ResourceLoadingRequest(downloaderManager: downloaderManager, request: request)
         loadingRequest.finish()
         pendingRequestWorkers.removeValue(forKey: k)
     }
     
     /// 取消资源请求
     public func cancel() {
-        downloader.cancel()
+        downloaderManager.cancel()
     }
     
     /// 析构函数
     deinit {
-        downloader.invalidateAndCancel()
+        downloaderManager.invalidateAndCancel()
     }
 }
 
@@ -80,7 +80,7 @@ extension ResourceLoader {
     /// - Parameter request: 资源请求
     func start(request: AVAssetResourceLoadingRequest) {
         let k = key(forRequest: request)
-        let loadingRequest = ResourceLoadingRequest(downloader: downloader, request: request)
+        let loadingRequest = ResourceLoadingRequest(downloaderManager: downloaderManager, request: request)
         loadingRequest.delegate = self
         pendingRequestWorkers[k] = loadingRequest
         loadingRequest.start()

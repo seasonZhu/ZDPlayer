@@ -24,7 +24,7 @@ public class ResourceLoaderManager: NSObject {
     private var loaders = [String: ResourceLoader]()
     
     /// 资源前缀
-    private var kCacheScheme = "playerMideaCache"
+    private var kCacheScheme = "ResourceLoaderManager"
     
     /// 初始化方法
     public override init() {}
