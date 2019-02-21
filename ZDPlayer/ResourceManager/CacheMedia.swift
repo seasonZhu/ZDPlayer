@@ -48,13 +48,28 @@ public class CacheMedia: NSObject, NSCoding, Codable {
         }
     }
     
-    /// Codable
-    required public init(from decoder: Decoder) {
-        
+    private enum CodingKeys:String, CodingKey {
+        case contentType
+        case isByteRangeAccessSupported
+        case contentLength
+        case downloadedLength
     }
     
-    public func encode(to encoder: Encoder) {
-        
+    /// Codable
+    required public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        contentType = try values.decode(String.self, forKey: .contentType)
+        isByteRangeAccessSupported = try values.decode(Bool.self, forKey: .isByteRangeAccessSupported)
+        contentLength = try values.decode(Int64.self, forKey: .contentLength)
+        downloadedLength = try values.decode(UInt64.self, forKey: .downloadedLength)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(contentType, forKey: .contentType)
+        try container.encode(isByteRangeAccessSupported, forKey: .isByteRangeAccessSupported)
+        try container.encode(contentLength, forKey: .contentLength)
+        try container.encode(downloadedLength, forKey: .downloadedLength)
     }
 }
 

@@ -25,6 +25,8 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying, Codable {
     /// 缓存段
     public private(set) var cacheSegments = [NSValue]()
     
+    public private(set) var cacheRanges = [NSRange]()
+    
     /// 缓存多媒体
     public var cacheMedia: CacheMedia?
     
@@ -134,13 +136,34 @@ public class CacheMediaInfo: NSObject, NSCoding, NSCopying, Codable {
         return "filePath: \(String(describing: filePath))\n cacheMedia: \(String(describing: cacheMedia))\n url: \(String(describing: url))\n cacheSegments: \(cacheSegments) \n"
     }
     
-    /// Codable
-    required public convenience init(from decoder: Decoder) {
-        self.init()
+    private enum CodingKeys:String, CodingKey {
+        case fileName
+        case cacheRanges
+        case downloadInfos
+        case cacheMedia
+        case url
     }
     
-    public func encode(to encoder: Encoder) {
-        
+    /// Codable
+    required public convenience init(from decoder: Decoder) throws {
+        self.init()
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        fileName = try values.decode(String.self, forKey: .fileName)
+        cacheRanges = try values.decode([NSRange].self, forKey: .cacheRanges)
+        cacheSegments = cacheRanges.map {  return NSValue(range: $0) }
+        downloadInfos = try values.decode([DownloadInfo].self, forKey: .downloadInfos)
+        cacheMedia = try values.decode(CacheMedia.self, forKey: .cacheMedia)
+        url = try values.decode(URL.self, forKey: .url)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(fileName, forKey: .fileName)
+        cacheRanges = cacheSegments.map { return $0.rangeValue }
+        try container.encode(cacheRanges, forKey: .cacheRanges)
+        try container.encode(downloadInfos, forKey: .downloadInfos)
+        try container.encode(cacheMedia, forKey: .cacheMedia)
+        try container.encode(url, forKey: .url)
     }
 }
 
@@ -169,6 +192,19 @@ extension CacheMediaInfo {
             return defaultInfo
         }
         mediaInfo.filePath = path
+        
+        
+        if let data = try? Data(contentsOf: URL(fileURLWithPath: path + ".json")) {
+            let jsonString = String(data: data, encoding: .utf8)
+            let info = try? JSONDecoder().decode(CacheMediaInfo.self, from: data)
+            print(jsonString)
+            print(info)
+            info?.filePath = path
+            if let newInfo = info {
+                return newInfo
+            }
+        }
+        
         return mediaInfo
     }
 }
@@ -181,6 +217,12 @@ extension CacheMediaInfo {
         cacheSegmentQueue.sync {
             guard let filePath = filePath else { return }
             let _ = NSKeyedArchiver.archiveRootObject(self, toFile: filePath)
+            
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let encodeData = try? encoder.encode(self)
+            print(encodeData)
+            try? encodeData?.write(to: URL(fileURLWithPath: filePath + ".json"))
         }
     }
     
@@ -250,6 +292,7 @@ extension CacheMediaInfo {
                 }
             }
             self.cacheSegments = cacheSegments
+            self.cacheRanges = cacheSegments.map { return $0.rangeValue }
         }
         
     }
@@ -291,12 +334,21 @@ class DownloadInfo: NSObject, NSCoding, Codable {
         self.time = (aDecoder.decodeObject(forKey:"time") as? NSNumber)?.doubleValue ?? 0
     }
     
-    /// Codable
-    required public init(from decoder: Decoder) {
-        
+    private enum CodingKeys:String, CodingKey {
+        case downloadedBytes
+        case time
     }
     
-    public func encode(to encoder: Encoder) {
-        
+    /// Codable
+    required public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        downloadedBytes = try values.decode(UInt64.self, forKey: .downloadedBytes)
+        time = try values.decode(TimeInterval.self, forKey: .time)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(downloadedBytes, forKey: .downloadedBytes)
+        try container.encode(time, forKey: .time)
     }
 }
