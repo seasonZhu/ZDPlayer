@@ -12,6 +12,10 @@ import Foundation
  NSCoding, NSCopying 协议的大前提是类必须继承NSObject呀
  */
 
+/*
+ 其实想去NSObject化,使用Codable协议进行数据的存储工作,但是看见网上的例子设计Codable都是JSON转模型的,看来这里是很难用上的了
+ */
+
 /// 多媒体下载配置信息
 public class CacheMediaInfo: NSObject, NSCoding, NSCopying, Codable {
     
@@ -277,7 +281,8 @@ class DownloadInfo: NSObject, NSCoding, Codable {
     /// NSCoding
     func encode(with aCoder: NSCoder) {
         aCoder.encode(downloadedBytes, forKey: "downloadedBytes")
-        aCoder.encode(NSNumber(value: time), forKey: "time") // 注意Double类型不能被NSCoding序列化, Double是struct Int/UInt也是struct 搞不懂 Double -> NSNumber
+        // 注意Double类型不能被NSCoding序列化, Double是struct Int/UInt也是struct 搞不懂 Double -> NSNumber
+        aCoder.encode(NSNumber(value: time), forKey: "time")
     }
 
     required init?(coder aDecoder: NSCoder) {
