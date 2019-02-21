@@ -48,7 +48,6 @@ class NormalPlayController: UIViewController {
             make.right.equalTo(view.snp.right)
             make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
         }
-        
         /*
          这样使用通知会导致循环引用
          但是使用GCD不会,需要注意
@@ -114,6 +113,18 @@ extension NormalPlayController: ZDPlayerDelegate {
     
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, willFullscreen isFullscreen: Bool) {
         isFullscreen ? print("ZDPlayerDelegate进入全屏") : print("ZDPlayerDelegate退出全屏")
+        
+        //  使用系统布局的时候 必须这样弄一下 具体的还需要研究一下
+        /*
+        if !isFullscreen {
+            self.player.playerView.snp.remakeConstraints { (make) in
+                make.top.equalTo(view.snp.top).offset(88)
+                make.left.equalTo(view.snp.left)
+                make.right.equalTo(view.snp.right)
+                make.height.equalTo(view.snp.width).multipliedBy(9.0/16.0)
+            }
+        }
+        */
     }
     
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, didPressCloseButton button: UIButton) {

@@ -234,6 +234,7 @@ open class ZDPlayerView: UIView {
         getBrightnessSlider()
         setUpUI()
         //setUpUIBySystem_iOS9()
+        //setUpUIBySystem()
     }
     
     /// 便利构造函数
@@ -556,6 +557,9 @@ extension ZDPlayerView {
                 make.width.equalTo(superview.bounds.width)
                 make.height.equalTo(superview.bounds.height)
             }
+            
+            //systemConstraintUpdateToLandscape(superview: superview)
+            
         }else if orientation == .portrait || orientation == .portraitUpsideDown {
             guard let parentView = self.parentView else {
                 return
@@ -574,6 +578,8 @@ extension ZDPlayerView {
                 make.height.equalTo(frame.height)
             }
             
+            //systemConstraintUpdateToPortrait(frame: frame)
+            
             viewFrame = .zero
             self.parentView = nil
         }
@@ -586,6 +592,7 @@ extension ZDPlayerView {
 
 // MARK: - 界面搭建相关,功能按钮的布局还可以优化,这里仅仅实现了功能
 extension ZDPlayerView {
+    
     /// 上布局
     func setUpTopView() {
         addSubview(topView)
@@ -1024,6 +1031,118 @@ extension ZDPlayerView {
         timeSlider.centerYAnchor.constraint(equalTo: bottomView.centerYAnchor).setIsActive(true)
         timeSlider.leftAnchor.constraint(equalTo: soundButton.rightAnchor, constant: 25).setIsActive(true)
         timeSlider.heightAnchor.constraint(equalToConstant: 25).setIsActive(true)
+    }
+}
+
+// MARK: - iOS通用的系统布局
+extension ZDPlayerView {
+    func setUpUIBySystem() {
+        backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        setUpTopViewBySystem()
+        setUpMiddelViewBySystem()
+        setUpBottomViewBySystem()
+    }
+    
+    /// 上布局
+    func setUpTopViewBySystem() {
+        addSubview(topView)
+        topView.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: topView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: topView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: topView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: topView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44))
+        
+        
+        topView.addSubview(closeButton)
+        closeButton.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: closeButton, attribute: .left, relatedBy: .equal, toItem: topView, attribute: .left, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: closeButton, attribute: .centerY, relatedBy: .equal, toItem: topView, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: closeButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 30))
+        addConstraint(NSLayoutConstraint(item: closeButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 30))
+        
+        topView.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .centerX, relatedBy: .equal, toItem: topView, attribute: .centerX, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: titleLabel, attribute: .centerY, relatedBy: .equal, toItem: topView, attribute: .centerY, multiplier: 1, constant: 0))
+        
+    }
+    
+    /// 中布局
+    func setUpMiddelViewBySystem() {
+        addSubview(replayButton)
+        replayButton.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: replayButton, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: replayButton, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: replayButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 30))
+        addConstraint(NSLayoutConstraint(item: replayButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 30))
+        
+        addSubview(loadingIndicator)
+        addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 30))
+        addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 30))
+    }
+    
+    /// 下布局
+    func setUpBottomViewBySystem() {
+        addSubview(bottomView)
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: bottomView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: bottomView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: bottomView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: bottomView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44))
+        
+        bottomView.addSubview(playButton)
+        playButton.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: playButton, attribute: .left, relatedBy: .equal, toItem: bottomView, attribute: .left, multiplier: 1, constant: 20))
+        addConstraint(NSLayoutConstraint(item: playButton, attribute: .centerY, relatedBy: .equal, toItem: bottomView, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: playButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 25))
+        addConstraint(NSLayoutConstraint(item: playButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 25))
+        
+        bottomView.addSubview(soundButton)
+        soundButton.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: soundButton, attribute: .left, relatedBy: .equal, toItem: playButton, attribute: .right, multiplier: 1, constant: 20))
+        addConstraint(NSLayoutConstraint(item: soundButton, attribute: .centerY, relatedBy: .equal, toItem: bottomView, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: soundButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 25))
+        addConstraint(NSLayoutConstraint(item: soundButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 25))
+        
+        bottomView.addSubview(fullscreenButton)
+        fullscreenButton.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: fullscreenButton, attribute: .right, relatedBy: .equal, toItem: bottomView, attribute: .right, multiplier: 1, constant: -10))
+        addConstraint(NSLayoutConstraint(item: fullscreenButton, attribute: .centerY, relatedBy: .equal, toItem: bottomView, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: fullscreenButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 30))
+        addConstraint(NSLayoutConstraint(item: fullscreenButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 30))
+        
+        bottomView.addSubview(timeLabel)
+        timeLabel.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .right, relatedBy: .equal, toItem: fullscreenButton, attribute: .left, multiplier: 1, constant: -10))
+        addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .centerY, relatedBy: .equal, toItem: bottomView, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: timeLabel, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 30))
+        
+        bottomView.addSubview(timeSlider)
+        timeSlider.translatesAutoresizingMaskIntoConstraints = false
+        addConstraint(NSLayoutConstraint(item: timeSlider, attribute: .right, relatedBy: .equal, toItem: timeLabel, attribute: .left, multiplier: 1, constant: -10))
+        addConstraint(NSLayoutConstraint(item: timeSlider, attribute: .centerY, relatedBy: .equal, toItem: bottomView, attribute: .centerY, multiplier: 1, constant: 0))
+        addConstraint(NSLayoutConstraint(item: timeSlider, attribute: .left, relatedBy: .equal, toItem: soundButton, attribute: .right, multiplier: 1, constant: 25))
+        addConstraint(NSLayoutConstraint(item: timeSlider, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 25))
+    }
+    
+    /// 系统布局更新到横屏
+    func systemConstraintUpdateToLandscape(superview: UIView) {
+        translatesAutoresizingMaskIntoConstraints = false
+        removeConstraints(constraints)
+        addConstraint(NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: superview.bounds.width))
+        addConstraint(NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: superview.bounds.height))
+        setUpUIBySystem()
+    }
+
+    /// 系统布局更新到竖屏
+    func systemConstraintUpdateToPortrait(frame: CGRect) {
+        translatesAutoresizingMaskIntoConstraints = false
+        removeConstraints(constraints)
+        addConstraint(NSLayoutConstraint(item: self, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: frame.width))
+        addConstraint(NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: frame.height))
+        setUpUIBySystem()
     }
 }
 
