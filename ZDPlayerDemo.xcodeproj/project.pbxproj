@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		61159495221F8F340058DD89 /* CodableExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61159494221F8F340058DD89 /* CodableExtension.swift */; };
 		611CB2BE22110DCF0009C1A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2BD22110DCF0009C1A0 /* AppDelegate.swift */; };
 		611CB2C022110DCF0009C1A0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611CB2BF22110DCF0009C1A0 /* ViewController.swift */; };
 		611CB2C322110DCF0009C1A0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 611CB2C122110DCF0009C1A0 /* Main.storyboard */; };
@@ -83,6 +84,7 @@
 		37CB3D88CE67CB53ECEAFBD2 /* Pods_ZDPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZDPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BBFC7B4116089711AEE0F1A /* Pods-ZDPlayerDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZDPlayerDemo.release.xcconfig"; path = "Target Support Files/Pods-ZDPlayerDemo/Pods-ZDPlayerDemo.release.xcconfig"; sourceTree = "<group>"; };
 		54B6B80674B62C335070AF3F /* Pods-ZDPlayer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZDPlayer.release.xcconfig"; path = "Target Support Files/Pods-ZDPlayer/Pods-ZDPlayer.release.xcconfig"; sourceTree = "<group>"; };
+		61159494221F8F340058DD89 /* CodableExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableExtension.swift; sourceTree = "<group>"; };
 		611CB2BA22110DCF0009C1A0 /* ZDPlayerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZDPlayerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		611CB2BD22110DCF0009C1A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		611CB2BF22110DCF0009C1A0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				611CB31D22155BC10009C1A0 /* LyricsPlayController.swift */,
 				611CB321221653060009C1A0 /* Mp3PlayController.swift */,
 				611CB32922166C5A0009C1A0 /* EmbedTableViewController.swift */,
+				61159494221F8F340058DD89 /* CodableExtension.swift */,
 				611CB2C122110DCF0009C1A0 /* Main.storyboard */,
 				611CB2C422110DD00009C1A0 /* Assets.xcassets */,
 				611CB2C622110DD00009C1A0 /* LaunchScreen.storyboard */,
@@ -472,6 +475,7 @@
 				611CB31C221557BF0009C1A0 /* LyricsPlayerView.swift in Sources */,
 				611CB32822166BD00009C1A0 /* VideoCell.swift in Sources */,
 				611CB2C022110DCF0009C1A0 /* ViewController.swift in Sources */,
+				61159495221F8F340058DD89 /* CodableExtension.swift in Sources */,
 				611CB322221653060009C1A0 /* Mp3PlayController.swift in Sources */,
 				611CB317221515410009C1A0 /* NormalPlayController.swift in Sources */,
 				611CB326221668510009C1A0 /* EmbedPlayerView.swift in Sources */,
