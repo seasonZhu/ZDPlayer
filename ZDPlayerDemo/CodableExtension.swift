@@ -21,7 +21,6 @@ extension JSONEncoder {
         case writeError
     }
     
-    
     /// 便利构造函数
     public convenience init(outputFormatting: JSONEncoder.OutputFormatting = .prettyPrinted,
                      dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .deferredToDate,
@@ -34,6 +33,16 @@ extension JSONEncoder {
         self.dataEncodingStrategy = dataEncodingStrategy
         self.nonConformingFloatEncodingStrategy = nonConformingFloatEncodingStrategy
         self.keyEncodingStrategy = keyEncodingStrategy
+    }
+    
+    /// 类方法写入
+    ///
+    /// - Parameters:
+    ///   - model: 模型
+    ///   - filePath: 文件路径
+    /// - Throws: 抛出的错误 EncodeToSandBoxError
+    public static func write<T: Codable>(model: T, filePath: String) throws {
+        try JSONEncoder().write(model: model, filePath: filePath)
     }
     
     /// 写入
@@ -139,9 +148,9 @@ extension JSONEncoder {
 extension JSONDecoder {
     /// 反序列化的错误
     ///
-    /// - createDirectoryError: 创建文件夹的错误
-    /// - encodeError: 序列化错误
-    /// - writeError: 写入错误
+    /// - fileNotExists: 文件不存在的错误
+    /// - readError: 读取数据错误
+    /// - decodeError: 反序列化错误
     public enum DecodeFromSandBoxError: Error {
         case fileNotExists
         case readError
@@ -158,6 +167,17 @@ extension JSONDecoder {
         self.dataDecodingStrategy = dataDecodingStrategy
         self.nonConformingFloatDecodingStrategy = nonConformingFloatDecodingStrategy
         self.keyDecodingStrategy = keyDecodingStrategy
+    }
+    
+    /// 类方法读取模型
+    ///
+    /// - Parameters:
+    ///   - type: 模型类型
+    ///   - filePath: 文件路径
+    /// - Returns: 返回模型实例
+    /// - Throws: 抛出错误 DecodeFromSandBoxError
+    public static func read<T: Codable>(_ type: T.Type, frome filePath: String) throws -> T  {
+        return try JSONDecoder.read(type, frome: filePath)
     }
     
     /// 读取模型

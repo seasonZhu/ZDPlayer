@@ -201,7 +201,7 @@ extension Dictionary {
 
 // MARK: - 缓存管理器的通知名称
 extension Notification.Name {
-    public static var CacheManagerDidUpdateCache = Notification.Name("com.lostsakura.www.CacheManagerDidUpdateCache")
-    public static var CacheManagerDidFinishCache = Notification.Name("com.lostsakura.www.CacheManagerDidFinishCache")
-    public static var CacheManagerDidCleanCache = Notification.Name("com.lostsakura.www.CacheManagerDidCleanCache")
+    public static let CacheManagerDidUpdateCache = Notification.Name("com.lostsakura.www.CacheManagerDidUpdateCache")
+    public static let CacheManagerDidFinishCache = Notification.Name("com.lostsakura.www.CacheManagerDidFinishCache")
+    public static let CacheManagerDidCleanCache = Notification.Name("com.lostsakura.www.CacheManagerDidCleanCache")
 }

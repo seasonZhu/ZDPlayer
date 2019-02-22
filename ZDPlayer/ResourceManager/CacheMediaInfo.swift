@@ -17,6 +17,7 @@ public class CacheMediaInfo: Codable {
     /// 缓存段
     public private(set) var cacheSegments = [NSValue]()
     
+    /// 缓存的NSRang数组
     public private(set) var cacheRanges = [NSRange]()
     
     /// 缓存多媒体
