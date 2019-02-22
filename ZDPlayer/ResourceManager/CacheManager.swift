@@ -98,7 +98,6 @@ extension CacheManager {
         }
     }
     
-    
     /// 清理过期文件
     ///
     /// - Parameter callback: 回调(删除的过期文件名称)

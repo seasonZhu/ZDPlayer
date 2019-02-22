@@ -8,14 +8,6 @@
 
 import Foundation
 
-/*
- NSCoding, NSCopying 协议的大前提是类必须继承NSObject呀
- */
-
-/*
- 其实想去NSObject化,使用Codable协议进行数据的存储工作,但是看见网上的例子设计Codable都是JSON转模型的,看来这里是很难用上的了
- */
-
 /// 多媒体下载配置信息
 public class CacheMediaInfo: Codable {
     
@@ -146,7 +138,7 @@ extension CacheMediaInfo {
     /// - Returns: info的路径
     public static func getMediaInfoPath(for filePath: String) -> String {
         let nsString = filePath as NSString
-        return nsString.deletingPathExtension + ".conf"
+        return nsString.deletingPathExtension + ".json"
     }
     
     /// 获取MediaInfo的模型
@@ -156,21 +148,11 @@ extension CacheMediaInfo {
     public static func getMediaInfo(filePath: String) -> CacheMediaInfo {
         let path = getMediaInfoPath(for: filePath)
     
-        if let data = try? Data(contentsOf: URL(fileURLWithPath: path + ".json")) {
-            let jsonString = String(data: data, encoding: .utf8)
-            let info = try? JSONDecoder().decode(CacheMediaInfo.self, from: data)
-            print(jsonString)
-            print(info)
-            info?.filePath = path
-            if let newInfo = info {
-                return newInfo
-            }
-        }else {
-            let defaultInfo = CacheMediaInfo()
-            defaultInfo.filePath = path
-            defaultInfo.fileName = (filePath as NSString).lastPathComponent
-            return defaultInfo
+        if let data = try? Data(contentsOf: URL(fileURLWithPath: path)), let info = try? JSONDecoder().decode(CacheMediaInfo.self, from: data) {
+            info.filePath = path
+            return info
         }
+        
         let defaultInfo = CacheMediaInfo()
         defaultInfo.filePath = path
         defaultInfo.fileName = (filePath as NSString).lastPathComponent
@@ -189,8 +171,7 @@ extension CacheMediaInfo {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .prettyPrinted
             let encodeData = try? encoder.encode(self)
-            print(encodeData)
-            try? encodeData?.write(to: URL(fileURLWithPath: filePath + ".json"))
+            try? encodeData?.write(to: URL(fileURLWithPath: filePath))
         }
     }
     
@@ -279,6 +260,42 @@ extension CacheMediaInfo {
         }
     }
 }
+
+class DownloadInfo: Codable {
+    
+    var downloadedBytes: UInt64 = 0
+    var time: TimeInterval = 0
+    
+    init() {
+        
+    }
+    
+    private enum CodingKeys:String, CodingKey {
+        case downloadedBytes
+        case time
+    }
+    
+    /// Codable
+    required public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        downloadedBytes = try values.decode(UInt64.self, forKey: .downloadedBytes)
+        time = try values.decode(TimeInterval.self, forKey: .time)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(downloadedBytes, forKey: .downloadedBytes)
+        try container.encode(time, forKey: .time)
+    }
+}
+
+/*
+ NSCoding, NSCopying 协议的大前提是类必须继承NSObject呀
+ */
+
+/*
+ 其实想去NSObject化,使用Codable协议进行数据的存储工作,但是看见网上的例子设计Codable都是JSON转模型的,看来这里是很难用上的了
+ */
 
 /*
 /// 多媒体下载配置信息
@@ -576,7 +593,7 @@ extension CacheMediaInfo {
         }
     }
 }
-*/
+
 class DownloadInfo: NSObject, NSCoding, Codable {
 
     var downloadedBytes: UInt64 = 0
@@ -617,3 +634,4 @@ class DownloadInfo: NSObject, NSCoding, Codable {
         try container.encode(time, forKey: .time)
     }
 }
+*/
