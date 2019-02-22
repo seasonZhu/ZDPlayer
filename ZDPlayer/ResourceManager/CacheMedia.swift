@@ -23,6 +23,8 @@ public class CacheMedia: Codable {
     /// 以下载的长度
     public var downloadedLength: UInt64 = 0
     
+    //MARK:- 下面这段其实可写可不写,但是注意,如果Xcode提示你非写不可,说明你的属性中有自定义的模型中没有遵守Codable
+    
     /// 初始化
     public init() {
         

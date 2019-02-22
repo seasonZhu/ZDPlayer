@@ -267,22 +267,22 @@ class DownloadInfo: Codable {
     var time: TimeInterval = 0
     
     init() {
-        
+
     }
-    
+
     private enum CodingKeys:String, CodingKey {
         case downloadedBytes
         case time
     }
-    
+
     /// Codable
-    required public init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         downloadedBytes = try values.decode(UInt64.self, forKey: .downloadedBytes)
         time = try values.decode(TimeInterval.self, forKey: .time)
     }
-    
-    public func encode(to encoder: Encoder) throws {
+
+    func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(downloadedBytes, forKey: .downloadedBytes)
         try container.encode(time, forKey: .time)
