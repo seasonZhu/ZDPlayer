@@ -84,7 +84,8 @@ public class CacheMediaInfo: Codable {
         cacheDownloadInfoQueue = DispatchQueue(label: "com.lostsakura.www.CacheDownloadInfoQueue")
     }
     
-    public func copy() -> Any {
+    /// Copy
+    public func copy() -> CacheMediaInfo {
         let mediaInfo = CacheMediaInfo()
         mediaInfo.filePath = filePath
         mediaInfo.fileName = fileName
@@ -267,9 +268,7 @@ class DownloadInfo: Codable {
     var downloadedBytes: UInt64 = 0
     var time: TimeInterval = 0
     
-    init() {
-
-    }
+    init() {}
 
     private enum CodingKeys:String, CodingKey {
         case downloadedBytes

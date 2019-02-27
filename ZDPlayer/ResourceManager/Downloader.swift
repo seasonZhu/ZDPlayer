@@ -138,7 +138,7 @@ extension Downloader {
         let currentTime = CFAbsoluteTimeGetCurrent()
         let interval = CacheManager.mediaCacheNotifyInterval
         if notifyTime < currentTime - interval || isFlush {
-            if let mediaInfo = cacheMediaWorker.mediaInfo?.copy() as? CacheMediaInfo {
+            if let mediaInfo = cacheMediaWorker.mediaInfo?.copy() {
                 let userInfo = [CacheManager.CacheMediaInfoKey: mediaInfo]
                 NotificationCenter.default.post(name: .CacheManagerDidUpdateCache, object: self, userInfo: userInfo)
                 
@@ -154,9 +154,12 @@ extension Downloader {
     /// - Parameter error: Error
     func notify(downloadFinishWithError error: Error?) {
         if let mediaInfo = cacheMediaWorker.mediaInfo?.copy() {
-            var userInfo = [CacheManager.CacheMediaInfoKey: mediaInfo]
+            var userInfo = [String: Any]()
             if let error = error {
+                userInfo.updateValue(mediaInfo, forKey: CacheManager.CacheMediaInfoKey)
                 userInfo.updateValue(error, forKey: CacheManager.CacheErrorKey)
+            }else {
+                userInfo.updateValue(mediaInfo, forKey: CacheManager.CacheMediaInfoKey)
             }
             NotificationCenter.default.post(name: .CacheManagerDidFinishCache, object: self, userInfo: userInfo)
         }

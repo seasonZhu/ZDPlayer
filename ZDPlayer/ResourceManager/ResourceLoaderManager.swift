@@ -14,7 +14,7 @@ public protocol ResourceLoaderManagerDelegate: class {
     func resourceLoaderManager(_ resourceLoaderManager: ResourceLoaderManager, loadURL: URL, didFailWithError error: Error?)
 }
 
-/// 资源加载管理器 使用了AVAssetResourceLoaderDelegate非继承NSObject
+/// 资源加载管理器 使用了AVAssetResourceLoaderDelegate需要继承NSObject
 public class ResourceLoaderManager: NSObject {
     
     /// 资源加载管理器的代理
