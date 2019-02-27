@@ -120,6 +120,7 @@ public extension ZDPlayerDelegate {
     func player(_ player: ZDPlayer, playerView: ZDPlayerView, showPlayerControl isShowPlayControl: Bool) {}
 }
 
+/// ZDPlayer 使用KVO非继承NSObject不可
 public class ZDPlayer: NSObject {
     
     /// 代理

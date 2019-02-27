@@ -24,6 +24,7 @@ public class BrightnessView: UIView {
         return share
     }
     
+    /// 销毁单例
     public static func destoryInstance() {
         _share = nil
     }

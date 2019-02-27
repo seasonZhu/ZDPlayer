@@ -29,19 +29,18 @@ class ViewController: UIViewController {
         
         let person = Person(name: "season", age: 32)
         
+        try? JSONEncoder().write(model: person, filePath: CacheManager.cacheDirectory + "/Person/person.json")
+        let data = JSONEncoder.transformModelToData(person)
+        let jsonString = JSONEncoder.transformModelToJSONString(person)
+        let jsonObject = JSONEncoder.transformModelToJSONObject(person) as? [String: Any]
+        print(data, jsonString, jsonObject)
+        let newPerson = try? JSONDecoder().read(Person.self, frome: CacheManager.cacheDirectory + "/Person/person.json")
+        
         // 序列化
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted //输出格式好看点
-        guard let data = try? encoder.encode(person) else { return }
-        let filePath = CacheManager.cacheDirectory + "/person.json"
-        let url = URL(fileURLWithPath: filePath)
-        try? data.write(to: url)
-        let jsonString = String(data: data, encoding: .utf8)
-        print(jsonString)
+        try? JSONEncoder().write(model: person, filePath: CacheManager.cacheDirectory + "/person.json")
         
         // 反序列化
-        guard let sandBoxData = try? Data(contentsOf: url) else { return }
-        let decodeStudent = try? JSONDecoder().decode(Person.self, from: sandBoxData)
+        let decodeStudent = try? JSONDecoder().read(Person.self, frome: CacheManager.cacheDirectory + "/person.json")
         print(decodeStudent)
         
     }
