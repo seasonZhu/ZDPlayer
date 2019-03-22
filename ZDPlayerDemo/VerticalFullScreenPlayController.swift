@@ -45,8 +45,8 @@ class VerticalFullScreenPlayController: UIViewController {
         player.playerView.closeButton.isHidden = true
         player.playerView.snp.makeConstraints { (make) in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            make.left.equalTo(view.snp.left)
-            make.right.equalTo(view.snp.right)
+            make.left.equalTo(view)
+            make.right.equalTo(view)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
