@@ -24,6 +24,7 @@ class Mp3PlayController: UIViewController {
         title = String(describing: type(of: self))
                 
         let url = URL(fileURLWithPath: Bundle.main.path(forResource: "saber", ofType: "mp3")!)
+//        let url = URL(fileURLWithPath: Bundle.main.path(forResource: "saber", ofType: "mp3")!)
         let mp3Info = ResourceLoaderManager.avURLAssetInfo(url: url)
         
         let buttonItem = UIBarButtonItem.init(title: "切歌", style: .plain, target: self, action: #selector(changeMusic(_:)))
@@ -206,6 +207,12 @@ extension Mp3PlayController {
             print("remoteControl")
         case .touches:
             print("touches")
+        case .scroll:
+            break
+        case .hover:
+            break
+        case .transform:
+            break
         }
     }
 }
